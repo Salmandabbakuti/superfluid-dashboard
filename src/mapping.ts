@@ -5,17 +5,16 @@ import { sendEPNSNotification } from "./EPNSNotification";
 export const subgraphID = "salmandabbakuti/superfluid-stream-push";
 
 let ZERO_BI = BigInt.fromI32(0);
-let ONE_BI = BigInt.fromI32(1);
 
 function getFlowActionType(
   oldFlowRate: BigInt,
   newFlowRate: BigInt
 ): string {
   return oldFlowRate.equals(ZERO_BI)
-    ? "CREATE"
+    ? "CREATED"
     : newFlowRate.equals(ZERO_BI)
-      ? "TERMINATE"
-      : "UPDATE";
+      ? "TERMINATED"
+      : "UPDATED";
 }
 
 function getStreamID(
@@ -87,47 +86,6 @@ export function getOrInitStreamRevision(
   return streamRevision as StreamRevision;
 }
 
-// export function getOrInitStream(event: FlowUpdatedEvent): Stream {
-
-//   // Create a streamRevision entity for this stream if one doesn't exist.
-//   const streamRevision = getOrInitStreamRevision(
-//     event.params.sender,
-//     event.params.receiver,
-//     event.params.token
-//   );
-//   const id = getStreamID(
-//     event.params.sender,
-//     event.params.receiver,
-//     event.params.token,
-//     streamRevision.revisionIndex
-//   );
-
-//   // set stream id
-//   streamRevision.mostRecentStream = id;
-//   streamRevision.save();
-
-//   let stream = Stream.load(id);
-//   if (stream == null) {
-//     const currentTimestamp = event.block.timestamp;
-//     stream = new Stream(id);
-//     stream.createdAt = currentTimestamp;
-//     stream.token = event.params.token.toHex();
-//     stream.sender = event.params.sender.toHex();
-//     stream.receiver = event.params.receiver.toHex();
-//     stream.flowRate = event.params.flowRate;
-//     stream.updatedAt = currentTimestamp;
-//   }
-//   return stream as Stream;
-// }
-
-function exponentToBigInt(decimals: BigInt): BigInt {
-  let bd = BigInt.fromString('1');
-  for (let i = ZERO_BI; i.lt(decimals as BigInt); i = i.plus(ONE_BI)) {
-    bd = bd.times(BigInt.fromString('10'));
-  }
-  return bd;
-}
-
 export function handleFlowUpdated(event: FlowUpdatedEvent): void {
   // Create a streamRevision entity for this stream if one doesn't exist.
   const streamRevision = getOrInitStreamRevision(
@@ -156,15 +114,13 @@ export function handleFlowUpdated(event: FlowUpdatedEvent): void {
   stream.type = streamType;
   stream.save();
 
-  let power = exponentToBigInt(BigInt.fromI32(18));
-
-  let recipient = "0xDc7c5B449D4417A5aa01bf53aD280b1BEDf4b078",
-    type = "1",
-    title = `Superfluid Stream Update`,
-    body = `You have received ${event.params.flowRate.div(power).toString()} DAI from ${event.params.sender.toHex()}`,
-    subject = "Superfluid Stream Update",
-    message = `You have received ${event.params.flowRate.div(power).toString()} DAI from ${event.params.sender.toHex()}`,
-    image = "https://play-lh.googleusercontent.com/i911_wMmFilaAAOTLvlQJZMXoxBF34BMSzRmascHezvurtslYUgOHamxgEnMXTklsF-S",
+  let recipient = event.params.receiver.toHex(),
+    type = "3",
+    title = `Your Superfluid Stream Update`,
+    body = `Your Superfluid stream with token address ${event.params.token.toHex()} from ${event.params.sender.toHex()} is ${streamType.toLowerCase()}`,
+    subject = "Your Superfluid Stream Update",
+    message = `Your Superfluid stream with token address ${event.params.token.toHex()} from ${event.params.sender.toHex()} is ${streamType.toLowerCase()}`,
+    image = "https://user-images.githubusercontent.com/29351207/215538608-77f5f873-00f9-44fb-91d5-f4cc8c980756.png",
     secret = "null",
     cta = `https://goerli.etherscan.io/tx/${event.transaction.hash.toHex()}`,
 
