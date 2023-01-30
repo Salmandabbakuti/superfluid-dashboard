@@ -8,7 +8,7 @@ dataSources:
     name: Superfluid
     network: goerli
     source:
-      address: "0x22ff293e14F1EC3A09B137e9e06084AFd63adDF9"
+      address: "0xEd6BcbF6907D4feEEe8a8875543249bEa9D308E8"
       abi: Superfluid
       startBlock: 7378860
     mapping:
