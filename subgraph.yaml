@@ -1,0 +1,26 @@
+specVersion: 0.0.5
+description: Subgraph for the Superfluid Steam Notifications using Push Protocol
+repository: https://github.com/superfluid-finance/protocol-monorepo
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Superfluid
+    network: goerli
+    source:
+      address: "0x22ff293e14F1EC3A09B137e9e06084AFd63adDF9"
+      abi: Superfluid
+      startBlock: 7378860
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Stream
+      abis:
+        - name: Superfluid
+          file: ./abis/Superfluid.json
+      eventHandlers:
+        - event: FlowUpdated(indexed address,indexed address,indexed address,int96,int256,int256,bytes)
+          handler: handleFlowUpdated
+      file: ./src/mapping.ts
