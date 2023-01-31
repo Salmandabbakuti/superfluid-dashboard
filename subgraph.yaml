@@ -1,6 +1,6 @@
 specVersion: 0.0.5
-description: Subgraph for the Superfluid Steam Notifications using Push Protocol
-repository: https://github.com/superfluid-finance/protocol-monorepo
+description: Subgraph for the Superfluid Stream Notifications using Push Protocol
+repository: https://github.com/Salmandabbakuti/superfluid-streams-push
 schema:
   file: ./schema.graphql
 dataSources:

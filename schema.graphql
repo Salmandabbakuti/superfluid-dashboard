@@ -11,9 +11,9 @@ type Stream @entity {
 }
 
 enum StreamType {
-  CREATE
-  UPDATE 
-  TERMINATE
+  CREATED
+  UPDATED 
+  TERMINATED
 }
 
 type StreamRevision @entity {
