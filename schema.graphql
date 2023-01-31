@@ -4,13 +4,13 @@ type Stream @entity {
   receiver: String!
   token: String!
   flowRate: BigInt!
-  type: StreamType!
+  status: StreamStatus!
   txHash: String!
   createdAt: BigInt!
   updatedAt: BigInt!
 }
 
-enum StreamType {
+enum StreamStatus {
   CREATED
   UPDATED 
   TERMINATED

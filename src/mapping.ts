@@ -6,7 +6,7 @@ export const subgraphID = "salmandabbakuti/superfluid-stream-push";
 
 let ZERO_BI = BigInt.fromI32(0);
 
-function getFlowActionType(
+function getFlowStatus(
   oldFlowRate: BigInt,
   newFlowRate: BigInt
 ): string {
@@ -110,16 +110,16 @@ export function handleFlowUpdated(event: FlowUpdatedEvent): void {
     stream.updatedAt = currentTimestamp;
     stream.txHash = event.transaction.hash.toHex();
   }
-  const streamType = getFlowActionType(stream.flowRate, event.params.flowRate);
-  stream.type = streamType;
+  const streamStatus = getFlowStatus(stream.flowRate, event.params.flowRate);
+  stream.status = streamStatus;
   stream.save();
 
   let recipient = event.params.receiver.toHex(),
     type = "3",
     title = `Your Superfluid Stream Update`,
-    body = `Your Superfluid stream with token address ${event.params.token.toHex()} from ${event.params.sender.toHex()} is ${streamType.toLowerCase()}`,
+    body = `Your Superfluid stream with token address ${event.params.token.toHex()} from ${event.params.sender.toHex()} is ${streamStatus.toLowerCase()}`,
     subject = "Your Superfluid Stream Update",
-    message = `Your Superfluid stream with token address ${event.params.token.toHex()} from ${event.params.sender.toHex()} is ${streamType.toLowerCase()}`,
+    message = `Your Superfluid stream with token address ${event.params.token.toHex()} from ${event.params.sender.toHex()} is ${streamStatus.toLowerCase()}`,
     image = "https://user-images.githubusercontent.com/29351207/215538608-77f5f873-00f9-44fb-91d5-f4cc8c980756.png",
     secret = "null",
     cta = `https://goerli.etherscan.io/tx/${event.transaction.hash.toHex()}`,
