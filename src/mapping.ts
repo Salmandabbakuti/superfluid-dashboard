@@ -120,7 +120,7 @@ export function handleFlowUpdated(event: FlowUpdatedEvent): void {
     body = `Your Superfluid stream with token address ${event.params.token.toHex()} from ${event.params.sender.toHex()} is ${streamStatus.toLowerCase()}`,
     subject = "Your Superfluid Stream Update",
     message = `Your Superfluid stream with token address ${event.params.token.toHex()} from ${event.params.sender.toHex()} is ${streamStatus.toLowerCase()}`,
-    image = "https://user-images.githubusercontent.com/29351207/215538608-77f5f873-00f9-44fb-91d5-f4cc8c980756.png",
+    image = "https://user-images.githubusercontent.com/29351207/215953155-d0c1bd38-743f-4358-a224-b42c77471560.png",
     secret = "null",
     cta = `https://goerli.etherscan.io/tx/${event.transaction.hash.toHex()}`,
 
