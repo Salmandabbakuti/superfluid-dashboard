@@ -7,14 +7,11 @@ export const subgraphID = "salmandabbakuti/superfluid-stream-push";
 let ZERO_BI = BigInt.fromI32(0);
 
 function getFlowStatus(
-  oldFlowRate: BigInt,
-  newFlowRate: BigInt
+  currentFlowRate: BigInt
 ): string {
-  return oldFlowRate.equals(ZERO_BI)
-    ? "CREATED"
-    : newFlowRate.equals(ZERO_BI)
-      ? "TERMINATED"
-      : "UPDATED";
+  return currentFlowRate.equals(ZERO_BI)
+    ? "TERMINATED"
+    : "UPDATED";
 }
 
 function getStreamID(
@@ -99,6 +96,9 @@ export function handleFlowUpdated(event: FlowUpdatedEvent): void {
   streamRevision.save();
 
   let stream = Stream.load(streamId);
+  // if stream is newly created, status should be CREATED
+  // else get the status from the current flow rate
+  const streamStatus = stream == null ? "CREATED" : getFlowStatus(event.params.flowRate);
   if (stream == null) {
     const currentTimestamp = event.block.timestamp;
     stream = new Stream(streamId);
@@ -110,7 +110,6 @@ export function handleFlowUpdated(event: FlowUpdatedEvent): void {
     stream.updatedAt = currentTimestamp;
     stream.txHash = event.transaction.hash.toHex();
   }
-  const streamStatus = getFlowStatus(stream.flowRate, event.params.flowRate);
   stream.status = streamStatus;
   stream.save();
 
