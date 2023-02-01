@@ -12,7 +12,7 @@ To get started, you will need a Superfluid account and opted in to streams chann
 
 #### Demo
 
-https://user-images.githubusercontent.com/29351207/215960002-8a929ec4-927e-44b4-82c9-70d9fa91045c.mp4
+https://user-images.githubusercontent.com/29351207/215961261-b9ed4491-5606-4599-9410-606b2573169d.mp4
 
 #### Contributing
 
