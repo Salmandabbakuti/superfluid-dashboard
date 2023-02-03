@@ -4,11 +4,11 @@ This project provides real-time notifications for superfluid steam lifecycle(cre
 
 #### Workflow Architecture
 
-![superfluidxpush-architecture](https://user-images.githubusercontent.com/29351207/215531163-328cbad5-c93f-49da-8fee-e135c973cafd.png)
+![superfluid-streamsXpush_architecture](https://user-images.githubusercontent.com/29351207/216531845-761631c3-78b7-421b-9723-ac31fe3fb7cc.png)
 
 #### Getting started
 
-To get started, you should be opted in to streams channel(0xDc7c5B449D4417A5aa01bf53aD280b1BEDf4b078) on push staging app(follow video below) and have Push Protocol browser extension. Once you have these, whenever you create/update/delete streams on superfluid app, you should be getting notified on push channel about your streams.
+To get started, you should be opted in to streams channel(0xDc7c5B449D4417A5aa01bf53aD280b1BEDf4b078) on push staging app(follow video below) and have Push Protocol browser extension. Once you have these, whenever you create/update/delete streams on superfluid app, receiver should be getting notified on push channel about your streams.
 
 #### Steps to get started
 
@@ -18,8 +18,8 @@ To get started, you should be opted in to streams channel(0xDc7c5B449D4417A5aa01
 4. Go to https://app.superfluid.finance/send and connect your wallet to Superfluid app and select Goerli testnet
 5. Select receiver address, token and amount
 6. Click on "Send Stream" button
-7. You should be getting notified on push channel about your streams
-8. Try updating and deleting streams and you should be getting notified about your streams on push channel
+7. Receiver should be getting notified on push channel about stream(if they also opted-in to channel)
+8. Try updating and deleting stream and Receiver should be getting notified about stream on push channel
 
 #### Demo
 
