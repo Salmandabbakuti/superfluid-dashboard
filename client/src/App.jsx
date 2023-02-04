@@ -334,10 +334,6 @@ export default function App() {
       await flowOp.exec(provider.getSigner());
       message.success("Stream created successfully");
       setLoading(false);
-      // fetch streams after 15 seconds
-      setTimeout(() => {
-        getStreams();
-      }, 15000);
     } catch (err) {
       setLoading(false);
       message.error("Failed to create stream");
@@ -360,10 +356,6 @@ export default function App() {
       await flowOp.exec(provider.getSigner());
       message.success("Stream updated successfully");
       setLoading(false);
-      // fetch streams after 15 seconds
-      setTimeout(() => {
-        getStreams();
-      }, 15000);
     } catch (err) {
       setLoading(false);
       message.error("Failed to update stream");
@@ -383,10 +375,6 @@ export default function App() {
       await flowOp.exec(provider.getSigner());
       message.success("Stream deleted successfully");
       setLoading(false);
-      // fetch streams after 15 seconds
-      setTimeout(() => {
-        getStreams();
-      }, 15000);
     } catch (err) {
       setLoading(false);
       message.error("Failed to delete stream");
