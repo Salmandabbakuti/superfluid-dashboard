@@ -21,10 +21,20 @@ To get started, you should be opted in to streams channel(0xDc7c5B449D4417A5aa01
 7. Receiver should be getting notified on push channel about stream(if they also opted-in to channel)
 8. Try updating and deleting stream and Receiver should be getting notified about stream on push channel
 
+##### Running Client
+
+```
+npm install
+npm run start
+```
+
 #### Demo
+
+https://user-images.githubusercontent.com/29351207/216761081-08bd8b62-7b47-4da9-be29-b2a1acb5e98f.mp4
 
 https://user-images.githubusercontent.com/29351207/215961261-b9ed4491-5606-4599-9410-606b2573169d.mp4
 
+![Superfluid_stream-ui](https://user-images.githubusercontent.com/29351207/216759105-f93e7fa2-0755-42aa-b639-3a1b7e7a6f25.png)
 ![Superfluid_stream-notiication](https://user-images.githubusercontent.com/29351207/215981324-5bcabda2-b827-4da1-a885-c977c8ab1772.png)
 
 #### Contributing
