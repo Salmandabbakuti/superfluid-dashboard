@@ -99,18 +99,18 @@ export function handleFlowUpdated(event: FlowUpdatedEvent): void {
   // if stream is newly created, status should be CREATED
   // else get the status from the current flow rate
   const streamStatus = stream == null ? "CREATED" : getFlowStatus(event.params.flowRate);
+  const currentTimestamp = event.block.timestamp;
   if (stream == null) {
-    const currentTimestamp = event.block.timestamp;
     stream = new Stream(streamId);
     stream.sender = event.params.sender.toHex();
     stream.receiver = event.params.receiver.toHex();
     stream.token = event.params.token.toHex();
-    stream.flowRate = event.params.flowRate;
     stream.createdAt = currentTimestamp;
-    stream.updatedAt = currentTimestamp;
     stream.txHash = event.transaction.hash.toHex();
   }
   stream.status = streamStatus;
+  stream.updatedAt = currentTimestamp;
+  stream.flowRate = event.params.flowRate;
   stream.save();
 
   let recipient = event.params.receiver.toHex(),

@@ -69,10 +69,16 @@ const tokens = [
 
 const calculateFlowRate = (amount) => {
   if (amount) {
-    // convert from wei/sec to ether/month
+    // convert from wei/sec to token/month for displaying in UI
     return Math.round(ethers.utils.formatEther(amount) * 60 * 60 * 24 * 30);
   }
   return 0;
+};
+
+const calculateFlowRateInWeiPerSecond = (amount) => {
+  // convert amount from token/month to wei/second for sending to superfluid
+  const flowRateInWeiPerSecond = ethers.utils.parseEther(amount.toString()).div(2592000).toString();
+  return flowRateInWeiPerSecond;
 };
 
 export default function App() {
@@ -87,6 +93,7 @@ export default function App() {
   const [streamInput, setStreamInput] = useState({});
   const [loading, setLoading] = useState(false);
   const [superfluidSdk, setSuperfluidSdk] = useState(null);
+  const [updatedFlowRate, setUpdatedFlowRate] = useState(0);
 
   const handleConnectWallet = async () => {
     if (window?.ethereum) {
@@ -150,7 +157,12 @@ export default function App() {
         console.log("connected to network", info)
       );
     }
+    // sync streams every 30 seconds
+    const intervalCall = setInterval(() => {
+      getStreams();
+    }, 30000);
     return () => {
+      clearInterval(intervalCall);
       if (provider) {
         window.ethereum.removeAllListeners();
       }
@@ -311,9 +323,7 @@ export default function App() {
     try {
       setLoading(true);
       const superToken = await superfluidSdk.loadSuperToken(token);
-      // convert flowrate from ether per month to wei per second
-      const flowRateInWeiPerSecond = ethers.utils.parseEther(flowRate.toString()).div(2592000).toString();
-
+      const flowRateInWeiPerSecond = calculateFlowRateInWeiPerSecond(flowRate);
       console.log("flowRateInWeiPerSecond: ", flowRateInWeiPerSecond);
       let flowOp = superToken.createFlow({
         sender,
@@ -324,6 +334,10 @@ export default function App() {
       await flowOp.exec(provider.getSigner());
       message.success("Stream created successfully");
       setLoading(false);
+      // fetch streams after 15 seconds
+      setTimeout(() => {
+        getStreams();
+      }, 15000);
     } catch (err) {
       setLoading(false);
       message.error("Failed to create stream");
@@ -336,14 +350,20 @@ export default function App() {
     try {
       setLoading(true);
       const superToken = await superfluidSdk.loadSuperToken(token);
+      const flowRateInWeiPerSecond = calculateFlowRateInWeiPerSecond(flowRate);
+      console.log("flowRateInWeiPerSecond: ", flowRateInWeiPerSecond);
       let flowOp = superToken.updateFlow({
         sender,
         receiver,
-        flowRate
+        flowRate: flowRateInWeiPerSecond
       });
       await flowOp.exec(provider.getSigner());
       message.success("Stream updated successfully");
       setLoading(false);
+      // fetch streams after 15 seconds
+      setTimeout(() => {
+        getStreams();
+      }, 15000);
     } catch (err) {
       setLoading(false);
       message.error("Failed to update stream");
@@ -363,6 +383,10 @@ export default function App() {
       await flowOp.exec(provider.getSigner());
       message.success("Stream deleted successfully");
       setLoading(false);
+      // fetch streams after 15 seconds
+      setTimeout(() => {
+        getStreams();
+      }, 15000);
     } catch (err) {
       setLoading(false);
       message.error("Failed to delete stream");
@@ -450,7 +474,7 @@ export default function App() {
       key: "token",
       // sorter: (a, b) => a.site.localeCompare(b.site),
       ellipsis: true,
-      width: "10%",
+      width: "5%",
       render: ({ token }) => {
         const tokenData = tokens.find((oneToken) => oneToken.address === token) || {
           icon: "",
@@ -507,21 +531,20 @@ export default function App() {
             row.status === "TERMINATED" ? <Tag color="red">TERMINATED</Tag> : (
               <Space size="small">
                 <Popconfirm
-                  title={<Input type="number" placeholder="New Flow Rate" onChange={(e) => row.flowRate = e.target.value} />}
+                  title={<Input type="number" placeholder="New Flow Rate" onChange={(e) => setUpdatedFlowRate(e.target.value)} />}
                   // add descrition as input number to update flow rate
                   description="Enter new flow rate"
-                  onConfirm={() => handleUpdateStream(row)}>
+                  onConfirm={() => handleUpdateStream({ ...row, flowRate: updatedFlowRate })}>
                   <Button
                     type="primary"
-                    onClick={() => {
-                      console.log("row", row);
-                    }}
                   >
                     <EditOutlined />
                   </Button>
                 </Popconfirm>
                 <Popconfirm title="Are you sure?" onConfirm={() => handleDeleteStream(row)}>
-                  <Button type="primary" danger>
+                  <Button
+                    type="primary"
+                    danger>
                     <DeleteOutlined />
                   </Button>
                 </Popconfirm>
