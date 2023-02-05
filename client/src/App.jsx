@@ -38,8 +38,7 @@ import "./styles.css";
 const { Header, Footer, Sider, Content } = Layout;
 dayjs.extend(relativeTime);
 
-const SUPERFLUID_CHANNEL_ADDRESS =
-  "0xDc7c5B449D4417A5aa01bf53aD280b1BEDf4b078"; // Superfluid channel address
+const SUPERFLUID_CHANNEL_ADDRESS = "0xDc7c5B449D4417A5aa01bf53aD280b1BEDf4b078"; // Superfluid channel address
 
 const client = new GraphQLClient(
   "https://api.thegraph.com/subgraphs/name/salmandabbakuti/superfluid-stream-push",
@@ -51,19 +50,22 @@ const tokens = [
     name: "fDAIx",
     symbol: "fDAIx",
     address: "0xf2d68898557ccb2cf4c10c3ef2b034b2a69dad00",
-    icon: "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/dai/icon.svg"
+    icon:
+      "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/dai/icon.svg"
   },
   {
     name: "fUSDCx",
     symbol: "fUSDCx",
     address: "0x8ae68021f6170e5a766be613cea0d75236ecca9a",
-    icon: "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/usdc/icon.svg"
+    icon:
+      "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/usdc/icon.svg"
   },
   {
     name: "fTUSDx",
     symbol: "fTUSDx",
     address: "0x95697ec24439e3eb7ba588c7b279b9b369236941",
-    icon: "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/tusd/icon.svg"
+    icon:
+      "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/tusd/icon.svg"
   }
 ];
 
@@ -77,7 +79,10 @@ const calculateFlowRate = (amount) => {
 
 const calculateFlowRateInWeiPerSecond = (amount) => {
   // convert amount from token/month to wei/second for sending to superfluid
-  const flowRateInWeiPerSecond = ethers.utils.parseEther(amount.toString()).div(2592000).toString();
+  const flowRateInWeiPerSecond = ethers.utils
+    .parseEther(amount.toString())
+    .div(2592000)
+    .toString();
   return flowRateInWeiPerSecond;
 };
 
@@ -90,7 +95,7 @@ export default function App() {
   const [chainId, setChainId] = useState(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [streams, setStreams] = useState([]);
-  const [streamInput, setStreamInput] = useState({});
+  const [streamInput, setStreamInput] = useState({ token: tokens[0].address });
   const [loading, setLoading] = useState(false);
   const [superfluidSdk, setSuperfluidSdk] = useState(null);
   const [updatedFlowRate, setUpdatedFlowRate] = useState(0);
@@ -168,7 +173,6 @@ export default function App() {
       }
     };
   }, [provider]);
-
 
   const addSocketEvents = (sdkSocket) => {
     sdkSocket?.on(EVENTS.CONNECT, () => {
@@ -302,7 +306,7 @@ export default function App() {
         orderBy: "createdAt",
         orderDirection: "desc",
         where: {
-          sender: account,
+          sender: account
         }
       })
       .then((data) => {
@@ -317,9 +321,15 @@ export default function App() {
       });
   };
 
-  const handleCreateStream = async ({ token, sender = account, receiver, flowRate }) => {
+  const handleCreateStream = async ({
+    token,
+    sender = account,
+    receiver,
+    flowRate
+  }) => {
     console.log("create inputs: ", token, sender, receiver, flowRate);
-
+    if (!token || !sender || !receiver || !flowRate)
+      return message.error("Please fill all the fields");
     try {
       setLoading(true);
       const superToken = await superfluidSdk.loadSuperToken(token);
@@ -341,8 +351,14 @@ export default function App() {
     }
   };
 
-  const handleUpdateStream = async ({ token, sender = account, receiver, flowRate }) => {
+  const handleUpdateStream = async ({
+    token,
+    sender = account,
+    receiver,
+    flowRate
+  }) => {
     console.log("update inputs: ", token, sender, receiver, flowRate);
+    if (!flowRate) return message.error("Please enter new flow rate");
     try {
       setLoading(true);
       const superToken = await superfluidSdk.loadSuperToken(token);
@@ -446,7 +462,7 @@ export default function App() {
           })
         ) : (
           <>
-            <Button type="primary" onClick={optInToChannel}>
+            <Button type="primary" shape="round" onClick={optInToChannel}>
               Opt-in
             </Button>
             <Empty description="No notifications. Opt-in to channel to receive notifications" />
@@ -458,26 +474,27 @@ export default function App() {
 
   const columns = [
     {
-      title: "Token",
+      title: "Asset",
       key: "token",
-      // sorter: (a, b) => a.site.localeCompare(b.site),
-      ellipsis: true,
       width: "5%",
       render: ({ token }) => {
-        const tokenData = tokens.find((oneToken) => oneToken.address === token) || {
+        const tokenData = tokens.find(
+          (oneToken) => oneToken.address === token
+        ) || {
           icon: "",
           symbol: "Unknown"
         };
         return (
           <>
-            <Avatar
-              shape="circle"
-              size="large"
-              src={tokenData.icon}
-            />
-            <a href={`https://goerli.etherscan.io/token/${token}`} target="_blank" rel="noreferrer"
+            <Avatar shape="circle" size="large" src={tokenData.icon} />
+            <a
+              href={`https://goerli.etherscan.io/token/${token}`}
+              target="_blank"
+              rel="noreferrer"
               style={{ marginLeft: 10 }}
-            >{tokenData.symbol}</a>
+            >
+              {tokenData.symbol}
+            </a>
           </>
         );
       }
@@ -487,58 +504,75 @@ export default function App() {
       key: "receiver",
       dataIndex: "receiver",
       ellipsis: true,
-      width: "10%",
+      width: "10%"
     },
     {
       title: "Flow Rate",
       key: "flowRate",
-      sorter: false,
+      sorter: (a, b) => a.flowRate.localeCompare(b.flowRate),
       width: "5%",
       render: ({ flowRate, token }) => {
         // calculate flow rate in tokens per second
         const monthlyFlowRate = calculateFlowRate(flowRate);
-        const tokenSymbol = tokens.find((oneToken) => oneToken.address === token)?.symbol || "Unknown";
+        const tokenSymbol =
+          tokens.find((oneToken) => oneToken.address === token)?.symbol ||
+          "Unknown";
         return (
-          <span style={{ color: "#1890ff" }}>{monthlyFlowRate} {tokenSymbol}/mo</span>
+          <span style={{ color: "#1890ff" }}>
+            {monthlyFlowRate} {tokenSymbol}/mo
+          </span>
         );
       }
     },
     {
-      title: "Created At",
+      title: "Created / Updated At",
       key: "createdAt",
-      sorter: false,
+      sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
       width: "5%",
-      render: ({ createdAt }) => dayjs(createdAt * 1000).format("DD MMM YYYY")
+      render: ({ createdAt, updatedAt }) => (
+        <Space direction="vertical">
+          <span>{dayjs(createdAt * 1000).format("DD MMM YYYY")}</span>
+          <span>{dayjs(updatedAt * 1000).format("DD MMM YYYY")}</span>
+        </Space>
+      )
     },
     {
       title: "Actions",
-      width: "10%",
+      width: "5%",
       render: (row) => (
         <>
-          {
-            row.status === "TERMINATED" ? <Tag color="red">TERMINATED</Tag> : (
-              <Space size="small">
-                <Popconfirm
-                  title={<Input type="number" placeholder="New Flow Rate" onChange={(e) => setUpdatedFlowRate(e.target.value)} />}
-                  // add descrition as input number to update flow rate
-                  description="Enter new flow rate"
-                  onConfirm={() => handleUpdateStream({ ...row, flowRate: updatedFlowRate })}>
-                  <Button
-                    type="primary"
-                  >
-                    <EditOutlined />
-                  </Button>
-                </Popconfirm>
-                <Popconfirm title="Are you sure?" onConfirm={() => handleDeleteStream(row)}>
-                  <Button
-                    type="primary"
-                    danger>
-                    <DeleteOutlined />
-                  </Button>
-                </Popconfirm>
-              </Space>
-            )
-          }
+          {row.status === "TERMINATED" ? (
+            <Tag color="red">TERMINATED</Tag>
+          ) : (
+            <Space size="small">
+              <Popconfirm
+                title={
+                  <Input
+                    type="number"
+                    placeholder="New Flow Rate"
+                    onChange={(e) => setUpdatedFlowRate(e.target.value)}
+                  />
+                }
+                // add descrition as input number to update flow rate
+                description="Enter new flow rate"
+                onConfirm={() =>
+                  handleUpdateStream({ ...row, flowRate: updatedFlowRate })
+                }
+              >
+                <Button type="primary" shape="round">
+                  <EditOutlined />
+                </Button>
+              </Popconfirm>
+              <Popconfirm
+                title="Are you sure to delete?"
+                onConfirm={() => handleDeleteStream(row)}
+              >
+                <Button type="primary" shape="round" danger>
+                  <DeleteOutlined />
+                </Button>
+              </Popconfirm>
+            </Space>
+          )}
         </>
       )
     }
@@ -551,7 +585,15 @@ export default function App() {
           {account && (
             <Card type="inner" size="small">
               <Card.Meta
-                title="Connected"
+                title={
+                  <Button
+                    type="primary"
+                    shape="round"
+                    onClick={() => window.location.reload()}
+                  >
+                    Disconnect
+                  </Button>
+                }
                 description={`${account.slice(0, 8)}...${account.slice(-8)}`}
                 avatar={
                   <Avatar
@@ -612,16 +654,18 @@ export default function App() {
             {provider ? (
               <div>
                 {/* Create Stream Section Starts */}
-                <Card
-                  className="new-post-card-container"
-                  title="Send Stream"
-                >
+                <Card className="new-post-card-container" title="Send Stream">
                   <Input
                     type="text"
                     placeholder="Receiver Wallet Address"
                     name="receiver"
                     value={streamInput.receiver || ""}
-                    onChange={(e) => setStreamInput({ ...streamInput, receiver: e.target.value })}
+                    onChange={(e) =>
+                      setStreamInput({
+                        ...streamInput,
+                        receiver: e.target.value
+                      })
+                    }
                     style={{
                       borderRadius: 10,
                       marginBottom: 10,
@@ -634,31 +678,44 @@ export default function App() {
                       defaultValue={tokens[0].symbol}
                       name="token"
                       id="token"
+                      value={streamInput?.token || tokens[0].address}
                       style={{
                         borderRadius: 10,
-                        marginBottom: 10,
+                        marginBottom: 10
                       }}
-                      onChange={(val) => setStreamInput({ ...streamInput, token: val })}>
-                      <Select.Option value={tokens[0].address}>{tokens[0].symbol}</Select.Option>
-                      <Select.Option value={tokens[1].address}>{tokens[1].symbol}</Select.Option>
-                      <Select.Option value={tokens[2].address}>{tokens[2].symbol}</Select.Option>
+                      onChange={(val) =>
+                        setStreamInput({ ...streamInput, token: val })
+                      }
+                    >
+                      <Select.Option value={tokens[0].address}>
+                        {tokens[0].symbol}
+                      </Select.Option>
+                      <Select.Option value={tokens[1].address}>
+                        {tokens[1].symbol}
+                      </Select.Option>
+                      <Select.Option value={tokens[2].address}>
+                        {tokens[2].symbol}
+                      </Select.Option>
                     </Select>
                     {/*  add flowrate input */}
                     <InputNumber
                       name="flowRate"
                       addonAfter="/month"
                       placeholder="Flow Rate"
-                      value={streamInput?.flowRate || ""}
-                      onChange={(val) => setStreamInput({ ...streamInput, flowRate: val })}
+                      value={streamInput?.flowRate || 0}
+                      onChange={(val) =>
+                        setStreamInput({ ...streamInput, flowRate: val })
+                      }
                       style={{
                         borderRadius: 10,
-                        marginBottom: 10,
+                        marginBottom: 10
                         // width: 120
                       }}
                     />
                   </Space>
                   <Button
                     type="primary"
+                    shape="round"
                     style={{ marginTop: 10 }}
                     onClick={() => handleCreateStream(streamInput)}
                   >
@@ -697,11 +754,12 @@ export default function App() {
                   open={drawerVisible}
                 >
                   <h3>Push Socket</h3>
-                  <p>
-                    Connection Status :{" "}
-                    {isSocketConnected ? "Connected" : "Disconnected"}
-                  </p>
-                  <Button type="primary" onClick={toggleConnection}>
+                  <p>Connection Status : {isSocketConnected ? "🟢" : "🔴"}</p>
+                  <Button
+                    type="primary"
+                    shape="round"
+                    onClick={toggleConnection}
+                  >
                     {isSocketConnected ? "Disconnect" : "Connect"}
                   </Button>
                   <Tabs
@@ -754,4 +812,4 @@ export default function App() {
       </Layout>
     </>
   );
-};
+}
