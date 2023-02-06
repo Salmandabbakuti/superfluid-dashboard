@@ -13,7 +13,7 @@ To get started, you should be opted in to streams channel(0xDc7c5B449D4417A5aa01
 #### Steps to get started(Via superfluid official app)
 
 1. Go to https://staging.push.org/ and connect your wallet
-2. Opt in to Superfluid streams channel(0xDc7c5B449D4417A5aa01bf53aD280b1BEDf4b078) on push staging app by searching for the channel and clicking on "Opt In" button
+2. Opt in to Superfluid streams channel(https://staging.push.org/#/channels?channel=0xDc7c5B449D4417A5aa01bf53aD280b1BEDf4b078) on push staging app by searching for the channel and clicking on "Opt In" button
 3. Download and install Push staging browser extension from https://chrome.google.com/webstore/detail/push-staging-protocol-alp/bjiennpmhdcandkpigcploafccldlakj and add your(receiver) wallet address to the extension
 4. Go to https://app.superfluid.finance/send and connect your wallet to Superfluid app and select Goerli testnet
 5. Select receiver address, token and amount
@@ -24,6 +24,7 @@ To get started, you should be opted in to streams channel(0xDc7c5B449D4417A5aa01
 ##### Getting started via local setup
 
 ```
+cd client
 npm install
 npm run start
 ```
@@ -34,9 +35,9 @@ https://user-images.githubusercontent.com/29351207/215961261-b9ed4491-5606-4599-
 
 https://user-images.githubusercontent.com/29351207/216773709-d732db09-578f-4f70-a000-9050823270f1.mp4
 
-![Superfluid_stream-ui](https://user-images.githubusercontent.com/29351207/216759105-f93e7fa2-0755-42aa-b639-3a1b7e7a6f25.png)
+![Superfluid_stream-ui](https://user-images.githubusercontent.com/29351207/216894300-78b626ba-1554-4aea-8bc5-0ca50003353c.png)
 ![Superfluid_stream-app-notif](https://user-images.githubusercontent.com/29351207/216761308-eeb06b90-5baa-4983-a47d-383ebbd010c1.png)
-![Superfluid_stream-notiication](https://user-images.githubusercontent.com/29351207/215981324-5bcabda2-b827-4da1-a885-c977c8ab1772.png)
+![Superfluid_stream-ext-notiication](https://user-images.githubusercontent.com/29351207/215981324-5bcabda2-b827-4da1-a885-c977c8ab1772.png)
 
 #### Contributing
 

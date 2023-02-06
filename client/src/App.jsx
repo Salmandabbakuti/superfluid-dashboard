@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import * as PushAPI from "@pushprotocol/restapi";
 import { createSocketConnection, EVENTS } from "@pushprotocol/socket";
 import { NotificationItem, Chat } from "@pushprotocol/uiweb";
@@ -5,6 +6,7 @@ import { GraphQLClient, gql } from "graphql-request";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Framework } from "@superfluid-finance/sdk-core";
+import { providers, ethers } from "ethers";
 import {
   Tabs,
   notification,
@@ -24,8 +26,6 @@ import {
   Select,
   InputNumber
 } from "antd";
-import { useEffect, useState } from "react";
-import { providers, ethers } from "ethers";
 import {
   BellOutlined,
   BarsOutlined,
@@ -85,6 +85,33 @@ const calculateFlowRateInWeiPerSecond = (amount) => {
     .toString();
   return flowRateInWeiPerSecond;
 };
+
+const STREAMS_QUERY = gql`
+    query getStreams(
+      $skip: Int
+      $first: Int
+      $orderBy: Stream_orderBy
+      $orderDirection: OrderDirection
+      $where: Stream_filter
+    ) {
+      streams(
+        skip: $skip
+        first: $first
+        orderBy: $orderBy
+        orderDirection: $orderDirection
+        where: $where
+      ) {
+        id
+        sender
+        receiver
+        token
+        status
+        flowRate
+        createdAt
+        updatedAt
+      }
+    }
+  `;
 
 export default function App() {
   const [notifications, setNotifications] = useState([]);
@@ -269,33 +296,6 @@ export default function App() {
       }
     });
   };
-
-  const STREAMS_QUERY = gql`
-    query getStreams(
-      $skip: Int
-      $first: Int
-      $orderBy: Stream_orderBy
-      $orderDirection: OrderDirection
-      $where: Stream_filter
-    ) {
-      streams(
-        skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-      ) {
-        id
-        sender
-        receiver
-        token
-        status
-        flowRate
-        createdAt
-        updatedAt
-      }
-    }
-  `;
 
   const getStreams = () => {
     setLoading(true);
@@ -559,7 +559,7 @@ export default function App() {
                   handleUpdateStream({ ...row, flowRate: updatedFlowRate })
                 }
               >
-                <Button type="primary" shape="round">
+                <Button type="primary" shape="circle">
                   <EditOutlined />
                 </Button>
               </Popconfirm>
@@ -567,7 +567,7 @@ export default function App() {
                 title="Are you sure to delete?"
                 onConfirm={() => handleDeleteStream(row)}
               >
-                <Button type="primary" shape="round" danger>
+                <Button type="primary" shape="circle" danger>
                   <DeleteOutlined />
                 </Button>
               </Popconfirm>
@@ -613,9 +613,9 @@ export default function App() {
             defaultSelectedKeys={["notifications"]}
             items={[
               {
-                key: "explore",
+                key: "dashboard",
                 icon: <BarsOutlined />,
-                label: "Explore"
+                label: "Dashboard"
               },
               {
                 key: "notifications",
@@ -785,6 +785,7 @@ export default function App() {
               <Button
                 style={{ marginLeft: "30%" }}
                 type="primary"
+                shape="round"
                 onClick={handleConnectWallet}
               >
                 Connect Wallet
@@ -805,7 +806,7 @@ export default function App() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              © 2022 Salman Dabbakuti. Powered by Push Protocol
+              © {new Date().getFullYear()} Salman Dabbakuti. Powered by Superfluid & Push Protocol
             </a>
           </Footer>
         </Layout>

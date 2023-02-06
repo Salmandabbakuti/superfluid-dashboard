@@ -1,5 +1,8 @@
 {
-  "name": "push-graph-test",
+  "name": "superfluid-streams-push-subgraph",
+  "description": "Superfluid Stream Push Subgraph",
+  "version": "1.0.0",
+  "private": true,
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
@@ -13,8 +16,5 @@
   "dependencies": {
     "@graphprotocol/graph-cli": "0.34.0",
     "@graphprotocol/graph-ts": "0.28.0"
-  },
-  "devDependencies": {
-    "matchstick-as": "0.5.0"
   }
 }
