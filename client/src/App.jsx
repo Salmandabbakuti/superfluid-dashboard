@@ -87,31 +87,31 @@ const calculateFlowRateInWeiPerSecond = (amount) => {
 };
 
 const STREAMS_QUERY = gql`
-    query getStreams(
-      $skip: Int
-      $first: Int
-      $orderBy: Stream_orderBy
-      $orderDirection: OrderDirection
-      $where: Stream_filter
+  query getStreams(
+    $skip: Int
+    $first: Int
+    $orderBy: Stream_orderBy
+    $orderDirection: OrderDirection
+    $where: Stream_filter
+  ) {
+    streams(
+      skip: $skip
+      first: $first
+      orderBy: $orderBy
+      orderDirection: $orderDirection
+      where: $where
     ) {
-      streams(
-        skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-      ) {
-        id
-        sender
-        receiver
-        token
-        status
-        flowRate
-        createdAt
-        updatedAt
-      }
+      id
+      sender
+      receiver
+      token
+      status
+      flowRate
+      createdAt
+      updatedAt
     }
-  `;
+  }
+`;
 
 export default function App() {
   const [notifications, setNotifications] = useState([]);
@@ -188,17 +188,17 @@ export default function App() {
       window.ethereum.on("connect", (info) =>
         console.log("connected to network", info)
       );
-    }
-    // sync streams every 30 seconds
-    const intervalCall = setInterval(() => {
-      getStreams();
-    }, 30000);
-    return () => {
-      clearInterval(intervalCall);
-      if (provider) {
+
+      // sync streams every 30 seconds
+      const intervalCall = setInterval(() => {
+        getStreams();
+      }, 30000);
+
+      return () => {
+        clearInterval(intervalCall);
         window.ethereum.removeAllListeners();
-      }
-    };
+      };
+    }
   }, [provider]);
 
   const addSocketEvents = (sdkSocket) => {
@@ -502,9 +502,17 @@ export default function App() {
     {
       title: "Receiver",
       key: "receiver",
-      dataIndex: "receiver",
       ellipsis: true,
-      width: "10%"
+      width: "10%",
+      render: ({ receiver }) => (
+        <a
+          href={`https://goerli.etherscan.io/address/${receiver}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {receiver}
+        </a>
+      )
     },
     {
       title: "Flow Rate",
@@ -547,10 +555,10 @@ export default function App() {
             <Space size="small">
               <Popconfirm
                 title={
-                  <Input
-                    type="number"
+                  <InputNumber
+                    addonAfter="/month"
                     placeholder="New Flow Rate"
-                    onChange={(e) => setUpdatedFlowRate(e.target.value)}
+                    onChange={(val) => setUpdatedFlowRate(val)}
                   />
                 }
                 // add descrition as input number to update flow rate
@@ -725,7 +733,7 @@ export default function App() {
                 {/* Create Stream Section Ends */}
 
                 {/* Streams Table Starts */}
-                <h2 style={{ textAlign: "center" }}>Streams</h2>
+                <h2>My Streams</h2>
                 <Table
                   className="table_grid"
                   columns={columns}
@@ -806,7 +814,8 @@ export default function App() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              © {new Date().getFullYear()} Salman Dabbakuti. Powered by Superfluid & Push Protocol
+              © {new Date().getFullYear()} Salman Dabbakuti. Powered by
+              Superfluid & Push Protocol
             </a>
           </Footer>
         </Layout>
