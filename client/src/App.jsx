@@ -66,15 +66,21 @@ const tokens = [
     address: "0x95697ec24439e3eb7ba588c7b279b9b369236941",
     icon:
       "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/tusd/icon.svg"
+  },
+  {
+    name: "ETHx",
+    symbol: "ETHx",
+    address: "0x5943f705abb6834cad767e6e4bb258bc48d9c947",
+    icon: "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/eth/icon.svg"
   }
 ];
 
-const calculateFlowRate = (amount) => {
-  if (amount) {
-    // convert from wei/sec to token/month for displaying in UI
-    return Math.round(ethers.utils.formatEther(amount) * 60 * 60 * 24 * 30);
-  }
-  return 0;
+const calculateFlowRateInTokenPerMonth = (amount) => {
+  if (isNaN(amount)) return 0;
+  // convert from wei/sec to token/month for displaying in UI
+  const flowRate = (ethers.utils.formatEther(amount) * 2592000).toFixed(9);
+  // if flowRate is floating point number, remove unncessary trailing zeros
+  return flowRate.replace(/\.?0+$/, "");
 };
 
 const calculateFlowRateInWeiPerSecond = (amount) => {
@@ -520,8 +526,8 @@ export default function App() {
       sorter: (a, b) => a.flowRate.localeCompare(b.flowRate),
       width: "5%",
       render: ({ flowRate, token }) => {
-        // calculate flow rate in tokens per second
-        const monthlyFlowRate = calculateFlowRate(flowRate);
+        // calculate flow rate in tokens per month
+        const monthlyFlowRate = calculateFlowRateInTokenPerMonth(flowRate);
         const tokenSymbol =
           tokens.find((oneToken) => oneToken.address === token)?.symbol ||
           "Unknown";
@@ -703,6 +709,9 @@ export default function App() {
                       </Select.Option>
                       <Select.Option value={tokens[2].address}>
                         {tokens[2].symbol}
+                      </Select.Option>
+                      <Select.Option value={tokens[3].address}>
+                        {tokens[3].symbol}
                       </Select.Option>
                     </Select>
                     {/*  add flowrate input */}

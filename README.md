@@ -1,6 +1,10 @@
-### Superfluid Stream Lifecycle Notifications using Push Protocol
+### Money Streaming with Superfluid
 
-This project provides real-time notifications for superfluid stream lifecycle(creation, update, deletion) events using Push Protocol. The notifications are delivered to users via channels.
+This project includes a user-friendly dashboard where users can easily create, update, and delete superfluid streams, as well as monitor their status in real time with an in-house notification system. The dashboard provides a centralized location for users to manage all of their streams, view important details, and receive notifications.
+
+The dashboard is intuitive and easy to use, allowing users to quickly and efficiently manage their financial transactions. With this project, users can receive real-time notifications about stream creation, updates, and deletions, ensuring that they have up-to-date information using Push Protocol. The notifications are delivered to users via push channels.
+
+The beauty of this project is that users can get notified of streams even if they created/modified/deleted the stream from the official app/or through SDK or contract. This streamlined process helps to streamline communication and improves the overall efficiency of financial transactions, ensuring that all parties involved are always on the same page.
 
 #### Workflow Architecture
 
