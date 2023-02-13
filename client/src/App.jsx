@@ -71,7 +71,8 @@ const tokens = [
     name: "ETHx",
     symbol: "ETHx",
     address: "0x5943f705abb6834cad767e6e4bb258bc48d9c947",
-    icon: "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/eth/icon.svg"
+    icon:
+      "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/eth/icon.svg"
   }
 ];
 
@@ -412,22 +413,50 @@ export default function App() {
           notifications.map((oneNotification, id) => {
             const {
               payload: { data },
+              epoch,
               source
             } = oneNotification;
             const { app, icon, acta, asub, amsg, aimg, url } = data;
+            // time to now from epoch using dayjs
+            const timestamp = dayjs(epoch, { utc: true }).fromNow();
             return (
-              <NotificationItem
-                key={id} // any unique id
-                notificationTitle={asub}
-                notificationBody={amsg}
-                cta={acta}
-                app={app}
-                icon={icon}
-                image={aimg}
-                url={url}
-                chainName={source}
-                isSpam={false}
-              />
+              <Card
+                key={id}
+                style={{
+                  cursor: "pointer",
+                  marginTop: 14,
+                  borderRadius: 10,
+                  border: "1px solid #d9d9d9"
+                }}
+                title={
+                  <Card.Meta
+                    avatar={
+                      <Avatar
+                        shape="circle"
+                        size="large"
+                        src={icon}
+                      />
+                    }
+                    title={app}
+                    description={timestamp}
+                    onClick={() => window.open(url, "_blank")}
+                  />
+                }
+                onClick={() => window.open(acta, "_blank")}
+              >
+                <Card.Meta
+                  title={asub}
+                  description={amsg}
+                />
+                {aimg && (
+                  <img
+                    width={260}
+                    style={{ marginTop: 10, borderRadius: 10 }}
+                    alt="post-media"
+                    src={aimg}
+                  />
+                )}
+              </Card>
             );
           })
         ) : (
@@ -448,22 +477,50 @@ export default function App() {
           superfluidNotifications.map((oneNotification, id) => {
             const {
               payload: { data },
+              epoch,
               source
             } = oneNotification;
             const { app, icon, acta, asub, amsg, aimg, url } = data;
+            // time to now from epoch using dayjs
+            const timestamp = dayjs(epoch, { utc: true }).fromNow();
             return (
-              <NotificationItem
-                key={id} // any unique id
-                notificationTitle={asub}
-                notificationBody={amsg}
-                cta={acta}
-                app={app}
-                icon={icon}
-                image={aimg}
-                url={url}
-                chainName={source}
-                isSpam={false}
-              />
+              <Card
+                key={id}
+                style={{
+                  cursor: "pointer",
+                  marginTop: 14,
+                  borderRadius: 10,
+                  border: "1px solid #d9d9d9"
+                }}
+                title={
+                  <Card.Meta
+                    avatar={
+                      <Avatar
+                        shape="circle"
+                        size="large"
+                        src={icon}
+                      />
+                    }
+                    title={app}
+                    description={timestamp}
+                    onClick={() => window.open(url, "_blank")}
+                  />
+                }
+                onClick={() => window.open(acta, "_blank")}
+              >
+                <Card.Meta
+                  title={asub}
+                  description={amsg}
+                />
+                {aimg && (
+                  <img
+                    width={260}
+                    style={{ marginTop: 10, borderRadius: 10 }}
+                    alt="post-media"
+                    src={aimg}
+                  />
+                )}
+              </Card>
             );
           })
         ) : (
