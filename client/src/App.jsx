@@ -412,12 +412,11 @@ export default function App() {
         {notifications.length > 0 ? (
           notifications.map((oneNotification, id) => {
             const {
-              payload: { data },
-              epoch
+              payload: { data }
             } = oneNotification;
-            const { app, icon, acta, asub, amsg, aimg, url } = data;
+            const { app, icon, acta, asub, amsg, aimg, url, epoch } = data;
             // time to now from epoch using dayjs
-            const timestamp = dayjs(epoch, { utc: true }).fromNow();
+            const timestamp = dayjs.unix(epoch).fromNow();
             return (
               <Card
                 key={id}
@@ -466,12 +465,11 @@ export default function App() {
         {superfluidNotifications.length > 0 ? (
           superfluidNotifications.map((oneNotification, id) => {
             const {
-              payload: { data },
-              epoch
+              payload: { data }
             } = oneNotification;
-            const { app, icon, acta, asub, amsg, aimg, url } = data;
+            const { app, icon, acta, asub, amsg, aimg, url, epoch } = data;
             // time to now from epoch using dayjs
-            const timestamp = dayjs(epoch, { utc: true }).fromNow();
+            const timestamp = dayjs.unix(epoch).fromNow();
             return (
               <Card
                 key={id}
@@ -553,7 +551,7 @@ export default function App() {
           target="_blank"
           rel="noreferrer"
         >
-          {sender}
+          {sender === account ? `${sender} (You)` : sender}
         </a>
       )
     },
@@ -568,7 +566,7 @@ export default function App() {
           target="_blank"
           rel="noreferrer"
         >
-          {receiver}
+          {receiver === account ? `${receiver} (You)` : receiver}
         </a>
       )
     },
