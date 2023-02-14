@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as PushAPI from "@pushprotocol/restapi";
 import { createSocketConnection, EVENTS } from "@pushprotocol/socket";
-import { NotificationItem, Chat } from "@pushprotocol/uiweb";
+import { Chat } from "@pushprotocol/uiweb";
 import { GraphQLClient, gql } from "graphql-request";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -71,7 +71,8 @@ const tokens = [
     name: "ETHx",
     symbol: "ETHx",
     address: "0x5943f705abb6834cad767e6e4bb258bc48d9c947",
-    icon: "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/eth/icon.svg"
+    icon:
+      "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/eth/icon.svg"
   }
 ];
 
@@ -312,7 +313,7 @@ export default function App() {
         orderBy: "createdAt",
         orderDirection: "desc",
         where: {
-          sender: account
+          or: [{ sender: account }, { receiver: account }]
         }
       })
       .then((data) => {
@@ -411,23 +412,40 @@ export default function App() {
         {notifications.length > 0 ? (
           notifications.map((oneNotification, id) => {
             const {
-              payload: { data },
-              source
+              payload: { data }
             } = oneNotification;
-            const { app, icon, acta, asub, amsg, aimg, url } = data;
+            const { app, icon, acta, asub, amsg, aimg, url, epoch } = data;
+            // time to now from epoch using dayjs
+            const timestamp = dayjs.unix(epoch).fromNow();
             return (
-              <NotificationItem
-                key={id} // any unique id
-                notificationTitle={asub}
-                notificationBody={amsg}
-                cta={acta}
-                app={app}
-                icon={icon}
-                image={aimg}
-                url={url}
-                chainName={source}
-                isSpam={false}
-              />
+              <Card
+                key={id}
+                style={{
+                  cursor: "pointer",
+                  marginTop: 14,
+                  borderRadius: 10,
+                  border: "1px solid #d9d9d9"
+                }}
+                title={
+                  <Card.Meta
+                    avatar={<Avatar shape="circle" size="large" src={icon} />}
+                    title={app}
+                    description={timestamp}
+                    onClick={() => window.open(url, "_blank")}
+                  />
+                }
+                onClick={() => window.open(acta, "_blank")}
+              >
+                <Card.Meta title={asub} description={amsg} />
+                {aimg && (
+                  <img
+                    width={260}
+                    style={{ marginTop: 10, borderRadius: 10 }}
+                    alt="post-media"
+                    src={aimg}
+                  />
+                )}
+              </Card>
             );
           })
         ) : (
@@ -447,23 +465,40 @@ export default function App() {
         {superfluidNotifications.length > 0 ? (
           superfluidNotifications.map((oneNotification, id) => {
             const {
-              payload: { data },
-              source
+              payload: { data }
             } = oneNotification;
-            const { app, icon, acta, asub, amsg, aimg, url } = data;
+            const { app, icon, acta, asub, amsg, aimg, url, epoch } = data;
+            // time to now from epoch using dayjs
+            const timestamp = dayjs.unix(epoch).fromNow();
             return (
-              <NotificationItem
-                key={id} // any unique id
-                notificationTitle={asub}
-                notificationBody={amsg}
-                cta={acta}
-                app={app}
-                icon={icon}
-                image={aimg}
-                url={url}
-                chainName={source}
-                isSpam={false}
-              />
+              <Card
+                key={id}
+                style={{
+                  cursor: "pointer",
+                  marginTop: 14,
+                  borderRadius: 10,
+                  border: "1px solid #d9d9d9"
+                }}
+                title={
+                  <Card.Meta
+                    avatar={<Avatar shape="circle" size="large" src={icon} />}
+                    title={app}
+                    description={timestamp}
+                    onClick={() => window.open(url, "_blank")}
+                  />
+                }
+                onClick={() => window.open(acta, "_blank")}
+              >
+                <Card.Meta title={asub} description={amsg} />
+                {aimg && (
+                  <img
+                    width={260}
+                    style={{ marginTop: 10, borderRadius: 10 }}
+                    alt="post-media"
+                    src={aimg}
+                  />
+                )}
+              </Card>
             );
           })
         ) : (
@@ -506,6 +541,21 @@ export default function App() {
       }
     },
     {
+      title: "Sender",
+      key: "sender",
+      ellipsis: true,
+      width: "10%",
+      render: ({ sender }) => (
+        <a
+          href={`https://goerli.etherscan.io/address/${sender}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {sender === account ? `${sender} (You)` : sender}
+        </a>
+      )
+    },
+    {
       title: "Receiver",
       key: "receiver",
       ellipsis: true,
@@ -516,7 +566,7 @@ export default function App() {
           target="_blank"
           rel="noreferrer"
         >
-          {receiver}
+          {receiver === account ? `${receiver} (You)` : receiver}
         </a>
       )
     },
@@ -555,36 +605,45 @@ export default function App() {
       width: "5%",
       render: (row) => (
         <>
-          {row.status === "TERMINATED" ? (
-            <Tag color="red">TERMINATED</Tag>
+          {row.sender === account ? (
+            <>
+              {row.status === "TERMINATED" ? (
+                <Tag color="red">TERMINATED</Tag>
+              ) : (
+                <Space size="small">
+                  <Popconfirm
+                    title={
+                      <InputNumber
+                        addonAfter="/month"
+                        placeholder="New Flow Rate"
+                        onChange={(val) => setUpdatedFlowRate(val)}
+                      />
+                    }
+                    // add descrition as input number to update flow rate
+                    description="Enter new flow rate"
+                    onConfirm={() =>
+                      handleUpdateStream({ ...row, flowRate: updatedFlowRate })
+                    }
+                  >
+                    <Button type="primary" shape="circle">
+                      <EditOutlined />
+                    </Button>
+                  </Popconfirm>
+                  <Popconfirm
+                    title="Are you sure to delete?"
+                    onConfirm={() => handleDeleteStream(row)}
+                  >
+                    <Button type="primary" shape="circle" danger>
+                      <DeleteOutlined />
+                    </Button>
+                  </Popconfirm>
+                </Space>
+              )}
+            </>
           ) : (
-            <Space size="small">
-              <Popconfirm
-                title={
-                  <InputNumber
-                    addonAfter="/month"
-                    placeholder="New Flow Rate"
-                    onChange={(val) => setUpdatedFlowRate(val)}
-                  />
-                }
-                // add descrition as input number to update flow rate
-                description="Enter new flow rate"
-                onConfirm={() =>
-                  handleUpdateStream({ ...row, flowRate: updatedFlowRate })
-                }
-              >
-                <Button type="primary" shape="circle">
-                  <EditOutlined />
-                </Button>
-              </Popconfirm>
-              <Popconfirm
-                title="Are you sure to delete?"
-                onConfirm={() => handleDeleteStream(row)}
-              >
-                <Button type="primary" shape="circle" danger>
-                  <DeleteOutlined />
-                </Button>
-              </Popconfirm>
+            <Space>
+              <Tag color="green">INCOMING</Tag>
+              {row.status === "TERMINATED" && <Tag color="red">TERMINATED</Tag>}
             </Space>
           )}
         </>
