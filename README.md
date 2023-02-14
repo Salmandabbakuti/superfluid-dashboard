@@ -50,7 +50,7 @@ https://user-images.githubusercontent.com/29351207/215961261-b9ed4491-5606-4599-
 #### Screenshots
 
 ![Superfluid_stream-ui](https://user-images.githubusercontent.com/29351207/218626354-7ce1f35f-6abd-4518-8ae9-35d312a5ca0c.png)
-![Superfluid_stream-app-notif](https://user-images.githubusercontent.com/29351207/216761308-eeb06b90-5baa-4983-a47d-383ebbd010c1.png)
+![Superfluid_stream-app-notif](https://user-images.githubusercontent.com/29351207/218627229-eefd2141-3747-4eab-9af4-0ac0865a61c3.png)
 ![Superfluid_stream-ext-notiication](https://user-images.githubusercontent.com/29351207/218626309-082158ee-806a-4d9c-890f-84eb99b49146.png)
 
 #### Contributing
