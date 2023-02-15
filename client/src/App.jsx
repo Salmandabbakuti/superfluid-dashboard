@@ -38,6 +38,7 @@ import "./styles.css";
 const { Header, Footer, Sider, Content } = Layout;
 dayjs.extend(relativeTime);
 
+const isFirstTimeUser = localStorage.getItem("product_tour") === null;
 const SUPERFLUID_CHANNEL_ADDRESS = "0xDc7c5B449D4417A5aa01bf53aD280b1BEDf4b078"; // Superfluid channel address
 
 const client = new GraphQLClient(
@@ -176,6 +177,17 @@ export default function App() {
       addSocketEvents(sdkSocket);
       getNotifications();
       getStreams();
+      // if first time user, greet user with and notification and ask to check notifications'
+      if (isFirstTimeUser) {
+        setTimeout(() => {
+          notification.info({
+            message: "Welcome to Superfluid Streams",
+            description:
+              "Hey there! Just a friendly reminder to check your notifications in our app. We've got some important updates, messages, and personalized offers waiting for you. Thanks for using our app!"
+          });
+        }, 2000);
+        localStorage.setItem("product_tour", "done");
+      }
       return () => {
         if (sdkSocket) {
           removeSocketEvents(sdkSocket);
