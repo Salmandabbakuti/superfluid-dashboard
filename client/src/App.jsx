@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Framework } from "@superfluid-finance/sdk-core";
 import { providers, ethers } from "ethers";
+import { useTour } from '@reactour/tour';
 import {
   Tabs,
   notification,
@@ -76,6 +77,8 @@ const tokens = [
   }
 ];
 
+const isFirstTimeUser = localStorage.getItem("product_tour") === null;
+
 const calculateFlowRateInTokenPerMonth = (amount) => {
   if (isNaN(amount)) return 0;
   // convert from wei/sec to token/month for displaying in UI
@@ -134,6 +137,8 @@ export default function App() {
   const [superfluidSdk, setSuperfluidSdk] = useState(null);
   const [updatedFlowRate, setUpdatedFlowRate] = useState(0);
 
+  const { setIsOpen } = useTour();
+
   const handleConnectWallet = async () => {
     if (window?.ethereum) {
       const accounts = await window.ethereum.request({
@@ -159,6 +164,7 @@ export default function App() {
       setProvider(provider);
       setChainId(chainId);
       setAccount(accounts[0]);
+      setIsOpen(isFirstTimeUser);
     } else {
       console.warn("Please use web3 enabled browser");
       message.warn("Please install Metamask or any other web3 enabled browser");
@@ -626,7 +632,7 @@ export default function App() {
                     }
                   >
                     <Button type="primary" shape="circle">
-                      <EditOutlined />
+                      <EditOutlined className="edit_stream" />
                     </Button>
                   </Popconfirm>
                   <Popconfirm
@@ -634,7 +640,7 @@ export default function App() {
                     onConfirm={() => handleDeleteStream(row)}
                   >
                     <Button type="primary" shape="circle" danger>
-                      <DeleteOutlined />
+                      <DeleteOutlined className="delete_stream" />
                     </Button>
                   </Popconfirm>
                 </Space>
@@ -704,6 +710,7 @@ export default function App() {
             <h1 style={{ textAlign: "center", color: "white" }}>
               Superfluid Streams
               <BellOutlined
+                className="notification-bell"
                 style={{
                   float: "right",
                   marginTop: "19px",
