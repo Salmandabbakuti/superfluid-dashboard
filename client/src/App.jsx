@@ -329,7 +329,15 @@ export default function App() {
         where: {
           and: [
             { or: [{ sender: account }, { receiver: account }] },
-            ...searchInput && [{ or: [{ sender_contains_nocase: searchInput }, { receiver_contains_nocase: searchInput }] }]
+            ...(searchInput && [
+              {
+                or: [
+                  { sender_contains_nocase: searchInput },
+                  { receiver_contains_nocase: searchInput },
+                  { token_contains_nocase: searchInput }
+                ]
+              }
+            ])
           ]
         }
       })
