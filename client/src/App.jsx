@@ -30,7 +30,8 @@ import {
   BellOutlined,
   BarsOutlined,
   EditOutlined,
-  DeleteOutlined
+  DeleteOutlined,
+  SyncOutlined
 } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import "./styles.css";
@@ -134,6 +135,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [superfluidSdk, setSuperfluidSdk] = useState(null);
   const [updatedFlowRate, setUpdatedFlowRate] = useState(0);
+  const [searchInput, setSearchInput] = useState("");
 
   const handleConnectWallet = async () => {
     if (window?.ethereum) {
@@ -325,7 +327,10 @@ export default function App() {
         orderBy: "createdAt",
         orderDirection: "desc",
         where: {
-          or: [{ sender: account }, { receiver: account }]
+          and: [
+            { or: [{ sender: account }, { receiver: account }] },
+            ...searchInput && [{ or: [{ sender_contains_nocase: searchInput }, { receiver_contains_nocase: searchInput }] }]
+          ]
         }
       })
       .then((data) => {
@@ -814,6 +819,20 @@ export default function App() {
 
                 {/* Streams Table Starts */}
                 <h2>My Streams</h2>
+                <Space>
+                  <Input.Search
+                    placeholder="Search by address"
+                    value={searchInput}
+                    enterButton
+                    allowClear
+                    loading={loading}
+                    onSearch={getStreams}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                  />
+                  <Button type="primary" onClick={getStreams}>
+                    <SyncOutlined />
+                  </Button>
+                </Space>
                 <Table
                   className="table_grid"
                   columns={columns}
