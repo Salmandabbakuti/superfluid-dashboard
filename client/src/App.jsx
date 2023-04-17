@@ -135,7 +135,11 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [superfluidSdk, setSuperfluidSdk] = useState(null);
   const [updatedFlowRate, setUpdatedFlowRate] = useState(0);
-  const [searchInput, setSearchInput] = useState("");
+  const [searchFilter, setSearchFilter] = useState({
+    type: "",
+    token: "",
+    searchInput: ""
+  });
 
   const handleConnectWallet = async () => {
     if (window?.ethereum) {
@@ -320,6 +324,17 @@ export default function App() {
 
   const getStreams = () => {
     setLoading(true);
+    // update search filters based on type
+    const { type, token, searchInput } = searchFilter;
+    const filterObj = {};
+    if (token) filterObj.token = token;
+    if (type === "INCOMING") {
+      filterObj.receiver = account;
+    } else if (type === "OUTGOING") {
+      filterObj.sender = account;
+    } else if (type === "TERMINATED") {
+      filterObj.currentFlowRate = "0";
+    }
     client
       .request(STREAMS_QUERY, {
         skip: 0,
@@ -328,6 +343,7 @@ export default function App() {
         orderDirection: "desc",
         where: {
           and: [
+            filterObj,
             { or: [{ sender: account }, { receiver: account }] },
             ...(searchInput && [
               {
@@ -598,7 +614,7 @@ export default function App() {
     {
       title: "Flow Rate",
       key: "flowRate",
-      sorter: (a, b) => a.flowRate.localeCompare(b.flowRate),
+      sorter: (a, b) => a.flowRate - b.flowRate,
       width: "5%",
       render: ({ flowRate, token }) => {
         // calculate flow rate in tokens per month
@@ -616,7 +632,7 @@ export default function App() {
     {
       title: "Created / Updated At",
       key: "createdAt",
-      sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+      sorter: (a, b) => a.createdAt - b.createdAt,
       width: "5%",
       render: ({ createdAt, updatedAt }) => (
         <Space direction="vertical">
@@ -633,7 +649,10 @@ export default function App() {
           {row.sender === account ? (
             <>
               {row.status === "TERMINATED" ? (
-                <Tag color="red">TERMINATED</Tag>
+                <Space>
+                  <Tag color="blue">OUTGOING</Tag>
+                  <Tag color="red">TERMINATED</Tag>
+                </Space>
               ) : (
                 <Space size="small">
                   <Popconfirm
@@ -828,14 +847,48 @@ export default function App() {
                 {/* Streams Table Starts */}
                 <h2>My Streams</h2>
                 <Space>
+                  <label htmlFor="search">Token:</label>
+                  <Select
+                    defaultValue=""
+                    style={{ width: 120 }}
+                    onChange={(val) => setSearchFilter({ ...searchFilter, token: val })}
+                  >
+                    <Select.Option value="">All</Select.Option>
+                    {
+                      tokens.map((token) => (
+                        <Select.Option value={token.address}>
+                          <Avatar shape="circle" size="small" src={token.icon} />
+                          {' '}
+                          {token.symbol}
+                        </Select.Option>
+                      ))
+                    }
+                  </Select>
+                  <label htmlFor="search">Stream Type:</label>
+                  <Select
+                    defaultValue=""
+                    style={{ width: 120 }}
+                    onChange={(val) => setSearchFilter({ ...searchFilter, type: val })}
+                  >
+                    <Select.Option value="">All</Select.Option>
+                    <Select.Option value="INCOMING">
+                      <Tag color="green">INCOMING</Tag>
+                    </Select.Option>
+                    <Select.Option value="OUTGOING">
+                      <Tag color="blue">OUTGOING</Tag>
+                    </Select.Option>
+                    <Select.Option value="TERMINATED">
+                      <Tag color="red">TERMINATED</Tag>
+                    </Select.Option>
+                  </Select>
                   <Input.Search
                     placeholder="Search by address"
-                    value={searchInput}
+                    value={searchFilter?.searchInput}
                     enterButton
                     allowClear
                     loading={loading}
                     onSearch={getStreams}
-                    onChange={(e) => setSearchInput(e.target.value)}
+                    onChange={(e) => setSearchFilter({ ...searchFilter, searchInput: e.target.value })}
                   />
                   <Button type="primary" onClick={getStreams}>
                     <SyncOutlined />
