@@ -333,7 +333,7 @@ export default function App() {
     } else if (type === "OUTGOING") {
       filterObj.sender = account;
     } else if (type === "TERMINATED") {
-      filterObj.currentFlowRate = "0";
+      filterObj.flowRate = "0";
     }
     client
       .request(STREAMS_QUERY, {
