@@ -40,10 +40,10 @@ const { Header, Footer, Sider, Content } = Layout;
 dayjs.extend(relativeTime);
 
 const isFirstTimeUser = localStorage.getItem("product_tour") === null;
-const SUPERFLUID_CHANNEL_ADDRESS = "0xDc7c5B449D4417A5aa01bf53aD280b1BEDf4b078"; // Superfluid channel address
+const SUPERFLUID_CHANNEL_ADDRESS = "0x68fC69898FEe2ccd35a6df2E9323Ab46c1A3455c"; // Superfluid channel address for mumbai testnet
 
 const client = new GraphQLClient(
-  "https://api.thegraph.com/subgraphs/name/salmandabbakuti/superfluid-stream-push",
+  "https://api.thegraph.com/subgraphs/name/salmandabbakuti/superfluid-push-dashboard", // mumbai subgraph
   { headers: {} }
 );
 
@@ -51,21 +51,21 @@ const tokens = [
   {
     name: "fDAIx",
     symbol: "fDAIx",
-    address: "0xf2d68898557ccb2cf4c10c3ef2b034b2a69dad00",
+    address: "0x5D8B4C2554aeB7e86F387B4d6c00Ac33499Ed01f",
     icon:
       "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/dai/icon.svg"
   },
   {
     name: "fUSDCx",
     symbol: "fUSDCx",
-    address: "0x8ae68021f6170e5a766be613cea0d75236ecca9a",
+    address: "0x42bb40bF79730451B11f6De1CbA222F17b87Afd7",
     icon:
       "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/usdc/icon.svg"
   },
   {
     name: "fTUSDx",
     symbol: "fTUSDx",
-    address: "0x95697ec24439e3eb7ba588c7b279b9b369236941",
+    address: "0x918E0d5C96cAC79674E2D38066651212be3C9C48",
     icon:
       "https://raw.githubusercontent.com/superfluid-finance/assets/master/public//tokens/tusd/icon.svg"
   },
@@ -149,13 +149,46 @@ export default function App() {
       console.log("Using account: ", accounts[0]);
       const provider = new providers.Web3Provider(window.ethereum);
       const { chainId } = await provider.getNetwork();
-      if (chainId !== 5) {
-        message.info("Switching to goerli testnet");
-        // switch to the goerli testnet
-        await window.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x5" }]
-        });
+      if (chainId !== 80001) {
+        message.info("Switching to mumbai testnet");
+        // switch to the mumbai testnet
+        await window.ethereum
+          .request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0x13881" }]
+          })
+          .catch(async (err) => {
+            // This error code indicates that the chain has not been added to MetaMask.
+            console.log("err on switch", err);
+            if (err.code === 4902) {
+              message.info("Adding mumbai testnet to metamask");
+              await window.ethereum
+                .request({
+                  method: "wallet_addEthereumChain",
+                  params: [
+                    {
+                      chainId: "0x13881",
+                      chainName: "Polygon Mumbai Testnet",
+                      nativeCurrency: {
+                        name: "MATIC",
+                        symbol: "MATIC",
+                        decimals: 18
+                      },
+                      rpcUrls: [
+                        "https://matic-mumbai.chainstacklabs.com",
+                        "https://rpc-mumbai.maticvigil.com"
+                      ],
+                      blockExplorerUrls: ["https://mumbai.polygonscan.com"]
+                    }
+                  ]
+                })
+                .then(() => message.info("Switched to mumbai testnet"))
+                .catch((err) => {
+                  message.error("Error adding mumbai testnet to metamask");
+                  console.error(err);
+                });
+            }
+          });
       }
       console.log("chainId:", chainId);
       const sf = await Framework.create({
@@ -851,24 +884,25 @@ export default function App() {
                   <Select
                     defaultValue=""
                     style={{ width: 120 }}
-                    onChange={(val) => setSearchFilter({ ...searchFilter, token: val })}
+                    onChange={(val) =>
+                      setSearchFilter({ ...searchFilter, token: val })
+                    }
                   >
                     <Select.Option value="">All</Select.Option>
-                    {
-                      tokens.map((token) => (
-                        <Select.Option value={token.address}>
-                          <Avatar shape="circle" size="small" src={token.icon} />
-                          {' '}
-                          {token.symbol}
-                        </Select.Option>
-                      ))
-                    }
+                    {tokens.map((token) => (
+                      <Select.Option value={token.address}>
+                        <Avatar shape="circle" size="small" src={token.icon} />{" "}
+                        {token.symbol}
+                      </Select.Option>
+                    ))}
                   </Select>
                   <label htmlFor="search">Stream Type:</label>
                   <Select
                     defaultValue=""
                     style={{ width: 120 }}
-                    onChange={(val) => setSearchFilter({ ...searchFilter, type: val })}
+                    onChange={(val) =>
+                      setSearchFilter({ ...searchFilter, type: val })
+                    }
                   >
                     <Select.Option value="">All</Select.Option>
                     <Select.Option value="INCOMING">
@@ -888,7 +922,12 @@ export default function App() {
                     allowClear
                     loading={loading}
                     onSearch={getStreams}
-                    onChange={(e) => setSearchFilter({ ...searchFilter, searchInput: e.target.value })}
+                    onChange={(e) =>
+                      setSearchFilter({
+                        ...searchFilter,
+                        searchInput: e.target.value
+                      })
+                    }
                   />
                   <Button type="primary" onClick={getStreams}>
                     <SyncOutlined />

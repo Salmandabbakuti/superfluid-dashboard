@@ -2,7 +2,7 @@ import { BigInt, Address, ethereum, crypto, Bytes } from "@graphprotocol/graph-t
 import { FlowUpdated as FlowUpdatedEvent } from "../generated/Superfluid/Superfluid";
 import { Stream, StreamRevision } from "../generated/schema";
 import { sendEPNSNotification } from "./EPNSNotification";
-export const subgraphID = "salmandabbakuti/superfluid-stream-push";
+export const subgraphID = "salmandabbakuti/superfluid-push-dashboard";
 
 let ZERO_BI = BigInt.fromI32(0);
 

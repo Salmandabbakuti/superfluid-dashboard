@@ -7,10 +7,10 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ salmandabbakuti/superfluid-stream-push",
-    "create-local": "graph create --node http://localhost:8020/ salmandabbakuti/superfluid-stream-push",
-    "remove-local": "graph remove --node http://localhost:8020/ salmandabbakuti/superfluid-stream-push",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 salmandabbakuti/superfluid-stream-push",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ salmandabbakuti/superfluid-push-dashboard",
+    "create-local": "graph create --node http://localhost:8020/ salmandabbakuti/superfluid-push-dashboard",
+    "remove-local": "graph remove --node http://localhost:8020/ salmandabbakuti/superfluid-push-dashboard",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 salmandabbakuti/superfluid-push-dashboard",
     "test": "graph test"
   },
   "dependencies": {
