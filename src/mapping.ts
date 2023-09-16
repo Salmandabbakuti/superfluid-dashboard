@@ -1,17 +1,19 @@
-import { BigInt, Address, ethereum, crypto, Bytes } from "@graphprotocol/graph-ts";
-import { FlowUpdated as FlowUpdatedEvent } from "../generated/Superfluid/Superfluid";
+import {
+  BigInt,
+  Address,
+  ethereum,
+  crypto,
+  Bytes
+} from "@graphprotocol/graph-ts";
+import { FlowUpdated as FlowUpdatedEvent } from "../generated/CFAV1/CFAV1";
 import { Stream, StreamRevision } from "../generated/schema";
 import { sendEPNSNotification } from "./EPNSNotification";
 export const subgraphID = "salmandabbakuti/superfluid-push-dashboard";
 
 let ZERO_BI = BigInt.fromI32(0);
 
-function getFlowStatus(
-  currentFlowRate: BigInt
-): string {
-  return currentFlowRate.equals(ZERO_BI)
-    ? "TERMINATED"
-    : "UPDATED";
+function getFlowStatus(currentFlowRate: BigInt): string {
+  return currentFlowRate.equals(ZERO_BI) ? "TERMINATED" : "UPDATED";
 }
 
 function getStreamID(
@@ -52,14 +54,10 @@ export function getStreamRevisionID(
 ): string {
   const values: Array<ethereum.Value> = [
     ethereum.Value.fromAddress(senderAddress),
-    ethereum.Value.fromAddress(receiverAddress),
+    ethereum.Value.fromAddress(receiverAddress)
   ];
   const flowId = crypto.keccak256(encode(values));
-  return (
-    flowId.toHex() +
-    "-" +
-    tokenAddress.toHex()
-  );
+  return flowId.toHex() + "-" + tokenAddress.toHex();
 }
 /**
  * Gets or initializes the Stream Revision helper entity.
@@ -90,7 +88,12 @@ export function handleFlowUpdated(event: FlowUpdatedEvent): void {
     event.params.receiver,
     event.params.token
   );
-  const streamId = getStreamID(event.params.sender, event.params.receiver, event.params.token, streamRevision.revisionIndex);
+  const streamId = getStreamID(
+    event.params.sender,
+    event.params.receiver,
+    event.params.token,
+    streamRevision.revisionIndex
+  );
   // set stream id
   streamRevision.mostRecentStream = streamId;
   streamRevision.save();
@@ -98,7 +101,8 @@ export function handleFlowUpdated(event: FlowUpdatedEvent): void {
   let stream = Stream.load(streamId);
   // if stream is newly created, status should be CREATED
   // else get the status from the current flow rate
-  const streamStatus = stream == null ? "CREATED" : getFlowStatus(event.params.flowRate);
+  const streamStatus =
+    stream == null ? "CREATED" : getFlowStatus(event.params.flowRate);
   const currentTimestamp = event.block.timestamp;
   if (stream == null) {
     stream = new Stream(streamId);
@@ -122,11 +126,7 @@ export function handleFlowUpdated(event: FlowUpdatedEvent): void {
     image = "",
     secret = "null",
     cta = `https://goerli.etherscan.io/tx/${event.transaction.hash.toHex()}`,
-
     notification = `{\"type\": \"${type}\", \"title\": \"${title}\", \"body\": \"${body}\", \"subject\": \"${subject}\", \"message\": \"${message}\", \"image\": \"${image}\", \"secret\": \"${secret}\", \"cta\": \"${cta}\"}`;
 
-  sendEPNSNotification(
-    recipient,
-    notification
-  );
+  sendEPNSNotification(recipient, notification);
 }
