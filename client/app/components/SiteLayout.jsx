@@ -1,7 +1,8 @@
 "use client";
 import { Divider, Layout } from "antd";
 import { ConnectWallet } from "@thirdweb-dev/react";
-import { fDAIxAddress, fTUSDxAddress, fUSDCxAddress, MATICxAddress } from "@/utils/constants";
+import { fDAIxAddress } from "@/utils/constants";
+import NotificationDrawer from "./NotificationDrawer";
 import { tokens } from "@/utils";
 import "antd/dist/reset.css";
 
@@ -13,18 +14,15 @@ export default function SiteLayout({ children }) {
       <Header
         style={{
           padding: 0,
-          color: "#fff"
+          color: "#fff",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "0 5px"
-          }}
-        >
-          <h3>Superfluid Dashboard</h3>
+        <h3>Superfluid Dashboard</h3>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <NotificationDrawer />
           <ConnectWallet
             theme={"light"} // light | dark
             switchToActiveChain={true}
@@ -41,6 +39,7 @@ export default function SiteLayout({ children }) {
           />
         </div>
       </Header>
+
       <Content
         style={{
           margin: "12px 8px",
@@ -59,9 +58,10 @@ export default function SiteLayout({ children }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          ©{new Date().getFullYear()} Salman Dabbakuti. Powered by ThirdWeb and Next.js
+          ©{new Date().getFullYear()} Salman Dabbakuti. Powered by Superfluid &
+          Push Protocol
         </a>
-        <p style={{ fontSize: "12px" }}>v0.0.1</p>
+        <p style={{ fontSize: "12px" }}>v0.0.2</p>
       </Footer>
     </Layout>
   );

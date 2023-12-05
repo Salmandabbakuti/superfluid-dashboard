@@ -16,6 +16,7 @@
     "@ethersproject/contracts": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
     "@ethersproject/units": "^5.7.0",
+    "@pushprotocol/restapi": "^1.4.45",
     "@thirdweb-dev/chains": "^0.1.60",
     "@thirdweb-dev/react": "^4.1.11",
     "antd": "5.12.1",

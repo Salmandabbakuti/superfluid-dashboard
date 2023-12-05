@@ -19,7 +19,6 @@ import {
 } from "antd";
 import { SyncOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import styles from "./page.module.css";
-import "antd/dist/reset.css";
 
 import {
   provider,
