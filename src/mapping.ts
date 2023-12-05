@@ -1,18 +1,13 @@
-import { BigInt, Address, ethereum, crypto, Bytes } from "@graphprotocol/graph-ts";
-import { FlowUpdated as FlowUpdatedEvent } from "../generated/Superfluid/Superfluid";
+import {
+  Address,
+  ethereum,
+  crypto,
+  Bytes,
+  BigInt
+} from "@graphprotocol/graph-ts";
+import { FlowUpdated as FlowUpdatedEvent } from "../generated/CFAV1/CFAV1";
 import { Stream, StreamRevision } from "../generated/schema";
-import { sendEPNSNotification } from "./EPNSNotification";
-export const subgraphID = "salmandabbakuti/superfluid-stream-push";
-
-let ZERO_BI = BigInt.fromI32(0);
-
-function getFlowStatus(
-  currentFlowRate: BigInt
-): string {
-  return currentFlowRate.equals(ZERO_BI)
-    ? "TERMINATED"
-    : "UPDATED";
-}
+import { sendPushNotification } from "./pushNotification";
 
 function getStreamID(
   senderAddress: Address,
@@ -52,14 +47,10 @@ export function getStreamRevisionID(
 ): string {
   const values: Array<ethereum.Value> = [
     ethereum.Value.fromAddress(senderAddress),
-    ethereum.Value.fromAddress(receiverAddress),
+    ethereum.Value.fromAddress(receiverAddress)
   ];
   const flowId = crypto.keccak256(encode(values));
-  return (
-    flowId.toHex() +
-    "-" +
-    tokenAddress.toHex()
-  );
+  return flowId.toHex() + "-" + tokenAddress.toHex();
 }
 /**
  * Gets or initializes the Stream Revision helper entity.
@@ -84,49 +75,60 @@ export function getOrInitStreamRevision(
 }
 
 export function handleFlowUpdated(event: FlowUpdatedEvent): void {
+  const sender = event.params.sender;
+  const receiver = event.params.receiver;
+  const token = event.params.token;
+  const flowRate = event.params.flowRate;
+
   // Create a streamRevision entity for this stream if one doesn't exist.
-  const streamRevision = getOrInitStreamRevision(
-    event.params.sender,
-    event.params.receiver,
-    event.params.token
+  const streamRevision = getOrInitStreamRevision(sender, receiver, token);
+  const streamId = getStreamID(
+    sender,
+    receiver,
+    token,
+    streamRevision.revisionIndex
   );
-  const streamId = getStreamID(event.params.sender, event.params.receiver, event.params.token, streamRevision.revisionIndex);
+
+  // increment revision index if flowRate is 0 (flow is closed)
+  if (flowRate.equals(BigInt.fromI32(0))) {
+    streamRevision.revisionIndex = streamRevision.revisionIndex + 1;
+  }
   // set stream id
   streamRevision.mostRecentStream = streamId;
   streamRevision.save();
 
   let stream = Stream.load(streamId);
-  // if stream is newly created, status should be CREATED
-  // else get the status from the current flow rate
-  const streamStatus = stream == null ? "CREATED" : getFlowStatus(event.params.flowRate);
   const currentTimestamp = event.block.timestamp;
+
+  const streamStatus =
+    stream === null
+      ? "CREATED"
+      : flowRate.equals(BigInt.fromI32(0))
+      ? "TERMINATED"
+      : "UPDATED";
+
   if (stream == null) {
     stream = new Stream(streamId);
-    stream.sender = event.params.sender.toHex();
-    stream.receiver = event.params.receiver.toHex();
-    stream.token = event.params.token.toHex();
+    stream.sender = sender.toHex();
+    stream.receiver = receiver.toHex();
+    stream.token = token.toHex();
     stream.createdAt = currentTimestamp;
     stream.txHash = event.transaction.hash.toHex();
   }
-  stream.status = streamStatus;
+  stream.flowRate = flowRate;
   stream.updatedAt = currentTimestamp;
-  stream.flowRate = event.params.flowRate;
   stream.save();
 
   let recipient = event.params.receiver.toHex(),
     type = "3",
-    title = `Your Superfluid Stream Update`,
+    title = "Your Superfluid Stream Update",
     body = `Your Superfluid stream with token address ${event.params.token.toHex()} from ${event.params.sender.toHex()} is ${streamStatus.toLowerCase()}`,
     subject = `Your Superfluid stream is ${streamStatus.toLowerCase()}`,
     message = `Your Superfluid stream with token address ${event.params.token.toHex()} from ${event.params.sender.toHex()} is ${streamStatus.toLowerCase()}`,
     image = "",
     secret = "null",
     cta = `https://goerli.etherscan.io/tx/${event.transaction.hash.toHex()}`,
-
     notification = `{\"type\": \"${type}\", \"title\": \"${title}\", \"body\": \"${body}\", \"subject\": \"${subject}\", \"message\": \"${message}\", \"image\": \"${image}\", \"secret\": \"${secret}\", \"cta\": \"${cta}\"}`;
 
-  sendEPNSNotification(
-    recipient,
-    notification
-  );
+  sendPushNotification(recipient, notification);
 }

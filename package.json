@@ -1,20 +1,18 @@
 {
-  "name": "superfluid-streams-push-subgraph",
-  "description": "Superfluid Stream Push Subgraph",
+  "name": "superfluid-push-dashboard-subgraph",
   "version": "1.0.0",
+  "description": "Superfluid Push Dashboard Subgraph",
   "private": true,
-  "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ salmandabbakuti/superfluid-stream-push",
-    "create-local": "graph create --node http://localhost:8020/ salmandabbakuti/superfluid-stream-push",
-    "remove-local": "graph remove --node http://localhost:8020/ salmandabbakuti/superfluid-stream-push",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 salmandabbakuti/superfluid-stream-push",
-    "test": "graph test"
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ salmandabbakuti/superfluid-push-mumbai",
+    "create-local": "graph create --node http://localhost:8020/ salmandabbakuti/superfluid-push-mumbai",
+    "remove-local": "graph remove --node http://localhost:8020/ salmandabbakuti/superfluid-push-mumbai",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 salmandabbakuti/superfluid-push-mumbai"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "0.34.0",
-    "@graphprotocol/graph-ts": "0.28.0"
+    "@graphprotocol/graph-cli": "0.62.0",
+    "@graphprotocol/graph-ts": "0.31.0"
   }
 }

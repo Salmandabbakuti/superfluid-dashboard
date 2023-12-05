@@ -9,8 +9,16 @@ bin-release/
 node_modules/
 artifacts/
 cache/
+.next/
+out/
 build/
+dist/
 generated/
+.data/
+data/
+
+# testing
+/coverage
 
 # Executables
 *.swf
@@ -32,6 +40,11 @@ yarn-error.log*
 .env
 yarn.lock
 package-lock.json
+
+# local env files
+.env*.local
+# vercel
+.vercel
 
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
 # should NOT be excluded as they contain compiler settings and other important
