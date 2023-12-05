@@ -4,7 +4,7 @@ import {
   EpnsPushNotification
 } from "../generated/schema";
 
-const subgraphID = "salmandabbakuti/superfluid-push-dashboard";
+const subgraphID = "salmandabbakuti/superfluid-push-mumbai";
 
 export function sendPushNotification(
   recipient: string,

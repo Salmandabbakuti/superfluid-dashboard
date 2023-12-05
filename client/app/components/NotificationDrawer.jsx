@@ -1,4 +1,13 @@
-import { Drawer, Button, Tabs, Card, Avatar, Empty, message } from "antd";
+import {
+  Drawer,
+  Button,
+  Tabs,
+  Card,
+  Avatar,
+  Empty,
+  message,
+  notification
+} from "antd";
 import Image from "next/image";
 import dayjs from "dayjs";
 import { BellOutlined } from "@ant-design/icons";
@@ -89,8 +98,37 @@ export default function NotificationDrawer() {
         setIsSocketConnected(false);
       });
 
-      stream.on(CONSTANTS.STREAM.NOTIF, (data) => {
-        console.log("new notification->", data);
+      stream.on(CONSTANTS.STREAM.NOTIF, (feedItem) => {
+        console.log("Received new notification:", feedItem);
+        notification.info({
+          message: feedItem?.payload?.notification?.title,
+          description: feedItem?.payload?.notification?.body,
+          duration: 6,
+          icon: (
+            <Avatar
+              shape="circle"
+              size="large"
+              alt="notification icon"
+              src={feedItem?.payload?.data?.icon}
+            />
+          )
+        });
+        const {
+          payload: { data },
+          source
+        } = feedItem;
+        const newNotification = {
+          cta: data.acta,
+          app: data.app,
+          icon: data.icon,
+          title: data.asub,
+          message: data.amsg,
+          image: data.aimg,
+          url: data.url,
+          blockchain: source
+        };
+        console.log("New notification", newNotification);
+        setNotifications((prev) => [feedItem, ...prev]);
       });
     } catch (err) {
       console.error("push sdk init err->", err);
