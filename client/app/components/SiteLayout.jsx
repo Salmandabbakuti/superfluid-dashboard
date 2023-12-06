@@ -13,6 +13,9 @@ export default function SiteLayout({ children }) {
     <Layout style={{ minHeight: "100vh" }}>
       <Header
         style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 99,
           padding: 0,
           color: "#fff",
           display: "flex",

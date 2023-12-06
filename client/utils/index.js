@@ -1,5 +1,4 @@
 import { formatEther, parseEther } from "@ethersproject/units";
-import { JsonRpcProvider } from "@ethersproject/providers";
 import { Contract } from "@ethersproject/contracts";
 import { GraphQLClient, gql } from "graphql-request";
 import { cfav1ForwarderAddress, subgraphUrl, fDAIxAddress, fUSDCxAddress, fTUSDxAddress, MATICxAddress } from "./constants.js";

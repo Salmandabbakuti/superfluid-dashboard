@@ -20,7 +20,7 @@ export default function NotificationDrawer() {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const [notificationType, setNotificationType] = useState("inbox");
+  const [notificationType, setNotificationType] = useState("superfluid");
   const [pushSdk, setPushSdk] = useState(null);
   const [stream, setStream] = useState(null);
 

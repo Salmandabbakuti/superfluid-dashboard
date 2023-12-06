@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { GraphQLClient } from "graphql-request";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { formatEther } from "@ethersproject/units";
@@ -21,7 +20,6 @@ import { SyncOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import styles from "./page.module.css";
 
 import {
-  provider,
   tokens,
   fdaixContract,
   fusdcxContract,
@@ -37,8 +35,6 @@ import {
 dayjs.extend(relativeTime);
 
 export default function Home() {
-  const [accounts, setAccounts] = useState([]);
-  const [accountIndex, setAccountIndex] = useState(0);
   const [streams, setStreams] = useState([]);
   const [streamInput, setStreamInput] = useState({ token: tokens[0].address });
   const [updatedFlowRate, setUpdatedFlowRate] = useState(null);
@@ -52,7 +48,8 @@ export default function Home() {
   const [balances, setBalances] = useState({
     fdaix: 0,
     fusdcx: 0,
-    ftusdx: 0
+    ftusdx: 0,
+    maticx: 0
   });
 
   const signer = useSigner();
@@ -351,12 +348,12 @@ export default function Home() {
 
   return (
     <>
-      {account && (
+      {account ? (
         <div>
           {/* Balances Section Starts */}
           <Card
             bordered
-            title="Balances"
+            title="Super Tokens"
             className={styles.cardContainer}
             style={{ marginBottom: 20 }}
             extra={
@@ -373,7 +370,9 @@ export default function Home() {
               <Space key={i}>
                 <Avatar shape="circle" size="small" src={token.icon} />
                 <span>{token.symbol}</span>
-                <span>{balances[token.name.toLowerCase()]}</span>{" "}
+                <span>
+                  {balances[token?.name?.toLowerCase()] || "0.0"}
+                </span>{" "}
               </Space>
             ))}
           </Card>
@@ -530,6 +529,23 @@ export default function Home() {
             }}
           />
           {/* Streams Table Ends */}
+        </div>
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            textAlign: "center"
+          }}
+        >
+          <h2>Welcome to Superfluid Dashboard</h2>
+          <h2>
+            View and manage your Superfluid streams with ease. Including in-house realtime notifications about your streams
+          </h2>
+          <h2>Connect your wallet to get started</h2>
         </div>
       )}
     </>
