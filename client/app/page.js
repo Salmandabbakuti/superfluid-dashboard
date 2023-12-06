@@ -20,7 +20,7 @@ import { SyncOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import styles from "./page.module.css";
 
 import {
-  tokens,
+  supportedTokens,
   fdaixContract,
   fusdcxContract,
   ftusdxContract,
@@ -36,7 +36,7 @@ dayjs.extend(relativeTime);
 
 export default function Home() {
   const [streams, setStreams] = useState([]);
-  const [streamInput, setStreamInput] = useState({ token: tokens[0].address });
+  const [streamInput, setStreamInput] = useState({ token: supportedTokens[0].address });
   const [updatedFlowRate, setUpdatedFlowRate] = useState(null);
   const [loading, setLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
@@ -188,7 +188,7 @@ export default function Home() {
   };
 
   const getTokenBalances = async () => {
-    // get balances of all tokens
+    // get balances of all supportedTokens
     const [
       fdaixBalance,
       fusdcxBalance,
@@ -216,7 +216,7 @@ export default function Home() {
       key: "token",
       width: "5%",
       render: ({ token }) => {
-        const tokenData = tokens.find(
+        const tokenData = supportedTokens.find(
           (oneToken) => oneToken.address === token
         ) || {
           icon: "",
@@ -273,10 +273,10 @@ export default function Home() {
       sorter: (a, b) => a.flowRate - b.flowRate,
       width: "5%",
       render: ({ flowRate, token }) => {
-        // calculate flow rate in tokens per month
+        // calculate flow rate in supportedTokens per month
         const monthlyFlowRate = calculateFlowRateInTokenPerMonth(flowRate);
         const tokenSymbol =
-          tokens.find((oneToken) => oneToken.address === token)?.symbol ||
+          supportedTokens.find((oneToken) => oneToken.address === token)?.symbol ||
           "Unknown";
         return (
           <span style={{ color: "#1890ff" }}>
@@ -366,7 +366,7 @@ export default function Home() {
               />
             }
           >
-            {tokens.map((token, i) => (
+            {supportedTokens.map((token, i) => (
               <Space key={i}>
                 <Avatar shape="circle" size="small" src={token.icon} />
                 <span>{token.symbol}</span>
@@ -416,10 +416,10 @@ export default function Home() {
             <Space>
               <label htmlFor="token">Select Token:</label>
               <Select
-                defaultValue={tokens[0].symbol}
+                defaultValue={supportedTokens[0].symbol}
                 name="token"
                 id="token"
-                value={streamInput?.token || tokens[0].address}
+                value={streamInput?.token || supportedTokens[0].address}
                 style={{
                   borderRadius: 10,
                   marginBottom: 10
@@ -428,7 +428,7 @@ export default function Home() {
                   setStreamInput({ ...streamInput, token: val })
                 }
               >
-                {tokens.map((token, i) => (
+                {supportedTokens.map((token, i) => (
                   <Select.Option value={token.address} key={i}>
                     <Avatar shape="circle" size="small" src={token.icon} />{" "}
                     {token.symbol}
@@ -468,7 +468,7 @@ export default function Home() {
               }
             >
               <Select.Option value="">All</Select.Option>
-              {tokens.map((token, i) => (
+              {supportedTokens.map((token, i) => (
                 <Select.Option value={token.address} key={i}>
                   <Avatar shape="circle" size="small" src={token.icon} />{" "}
                   {token.symbol}

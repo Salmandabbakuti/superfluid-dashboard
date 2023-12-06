@@ -75,11 +75,14 @@ export default function NotificationDrawer() {
       });
 
       // realtime notifications
-      const stream = await pushSdk.initStream([
-        CONSTANTS.STREAM.NOTIF,
-        CONSTANTS.STREAM.CONNECT,
-        CONSTANTS.STREAM.DISCONNECT
-      ]);
+      const stream = await pushSdk.initStream(
+        [
+          CONSTANTS.STREAM.NOTIF,
+          CONSTANTS.STREAM.CONNECT,
+          CONSTANTS.STREAM.DISCONNECT
+        ],
+        { raw: true }
+      );
 
       setPushSdk(pushSdk);
       setStream(stream);
@@ -101,34 +104,31 @@ export default function NotificationDrawer() {
       stream.on(CONSTANTS.STREAM.NOTIF, (feedItem) => {
         console.log("Received new notification:", feedItem);
         notification.info({
-          message: feedItem?.payload?.notification?.title,
-          description: feedItem?.payload?.notification?.body,
+          message: feedItem?.message?.notification?.title,
+          description: feedItem?.message?.notification?.body,
           duration: 6,
           icon: (
             <Avatar
               shape="circle"
               size="large"
               alt="notification icon"
-              src={feedItem?.payload?.data?.icon}
+              src={feedItem?.channel?.icon}
             />
           )
         });
-        const {
-          payload: { data },
-          source
-        } = feedItem;
+        const { channel, message, timestamp } = feedItem;
         const newNotification = {
-          cta: data.acta,
-          app: data.app,
-          icon: data.icon,
-          title: data.asub,
-          message: data.amsg,
-          image: data.aimg,
-          url: data.url,
-          blockchain: source
+          app: channel.name,
+          icon: channel.icon,
+          url: channel.url,
+          acta: message.notification.payload.cta,
+          asub: message.notification.title,
+          amsg: message.notification.body,
+          aimg: message.notification.aimg,
+          epoch: timestamp
         };
         console.log("New notification", newNotification);
-        setNotifications((prev) => [feedItem, ...prev]);
+        setNotifications((prev) => [newNotification, ...prev]);
       });
     } catch (err) {
       console.error("push sdk init err->", err);

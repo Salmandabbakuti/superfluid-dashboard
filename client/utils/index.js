@@ -33,7 +33,7 @@ export const maticxContract = new Contract(
   erc20ABI
 );
 
-export const tokens = [
+export const supportedTokens = [
   {
     name: "fDAIx",
     symbol: "fDAIx",

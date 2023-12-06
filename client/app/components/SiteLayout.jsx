@@ -3,7 +3,7 @@ import { Divider, Layout } from "antd";
 import { ConnectWallet } from "@thirdweb-dev/react";
 import { fDAIxAddress } from "@/utils/constants";
 import NotificationDrawer from "./NotificationDrawer";
-import { tokens } from "@/utils";
+import { supportedTokens } from "@/utils";
 import "antd/dist/reset.css";
 
 const { Header, Footer, Content } = Layout;
@@ -32,7 +32,7 @@ export default function SiteLayout({ children }) {
             hideTestnetFaucet={false}
             modalSize={"wide"} // compact | wide
             supportedTokens={{
-              80001: tokens
+              80001: supportedTokens
             }}
             displayBalanceToken={{
               80001: fDAIxAddress

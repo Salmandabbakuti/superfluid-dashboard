@@ -8,12 +8,8 @@ import {
   rainbowWallet,
   trustWallet
 } from "@thirdweb-dev/react";
-import {
-  Ethereum,
-  Polygon,
-  Mumbai,
-} from "@thirdweb-dev/chains";
-import { chainId } from "@/utils/constants";
+import { Mumbai } from "@thirdweb-dev/chains";
+import { supportedChainId } from "@/utils/constants";
 
 const supportedWallets = [
   metamaskWallet({ recommended: true }),
@@ -21,12 +17,6 @@ const supportedWallets = [
   walletConnect(),
   rainbowWallet(),
   trustWallet()
-];
-
-const supportedChains = [
-  Ethereum,
-  Polygon,
-  Mumbai
 ];
 const clientId = process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID;
 
@@ -36,14 +26,14 @@ export default function Web3Provider({ children }) {
 
   return (
     <ThirdwebProvider
-      activeChain={chainId}
-      supportedChains={supportedChains}
+      activeChain={supportedChainId}
+      supportedChains={[Mumbai]}
       supportedWallets={supportedWallets}
       autoConnect={true}
       clientId={clientId}
       dAppMeta={{
-        name: "Web3 Dapp Starter",
-        description: "Web3 Dapp Starter",
+        name: "Superfluid Push Dashboard",
+        description: "Superfluid Push Dashboard",
         logoUrl: "https://example.com/logo.png",
         url: "https://example.com",
         isDarkMode: true
