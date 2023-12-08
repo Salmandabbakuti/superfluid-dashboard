@@ -3,6 +3,7 @@
 export const supportedChainId = 80001;
 export const subgraphUrl = "https://api.thegraph.com/subgraphs/name/salmandabbakuti/superfluid-push-mumbai";
 export const cfav1ForwarderAddress = "0xcfA132E353cB4E398080B9700609bb008eceB125";
+export const explorerUrl = "https://mumbai.polygonscan.com";
 export const superfluidChannelAddress = "0x577F488FD3354df55fB95DC1F1EF04cb3D67709C";
 
 // sf protocol super tokens on mumbai

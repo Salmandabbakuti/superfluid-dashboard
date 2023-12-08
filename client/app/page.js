@@ -32,6 +32,8 @@ import {
   subgraphClient as client
 } from "../utils";
 
+import { explorerUrl } from "../utils/constants";
+
 dayjs.extend(relativeTime);
 
 export default function Home() {
@@ -226,7 +228,7 @@ export default function Home() {
           <>
             <Avatar shape="circle" size="large" src={tokenData.icon} />
             <a
-              href={`http://localhost:8545/token/${token}`}
+              href={`${explorerUrl}/token/${token}`}
               target="_blank"
               rel="noreferrer"
               style={{ marginLeft: 10 }}
@@ -244,7 +246,7 @@ export default function Home() {
       width: "10%",
       render: ({ sender }) => (
         <a
-          href={`http://localhost:8545/address/${sender}`}
+          href={`${explorerUrl}/address/${sender}`}
           target="_blank"
           rel="noreferrer"
         >
@@ -259,7 +261,7 @@ export default function Home() {
       width: "10%",
       render: ({ receiver }) => (
         <a
-          href={`http://localhost:8545/address/${receiver}`}
+          href={`${explorerUrl}/address/${receiver}`}
           target="_blank"
           rel="noreferrer"
         >

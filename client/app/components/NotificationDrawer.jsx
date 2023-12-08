@@ -34,7 +34,7 @@ export default function NotificationDrawer() {
         limit: 20,
         page: 1,
         ...(notificationType === "superfluid" && {
-          channels: [`eip155:80001:${superfluidChannelAddress}`]
+          channels: [superfluidChannelAddress]
         })
       })
       .then((res) => {
