@@ -1,50 +1,33 @@
 {
-  "name": "superfluid-streams-frontend",
-  "version": "1.0.0",
+  "name": "superfluid-devmode-dashboard-client",
+  "description": "Superfluid Devmode Dashboard Client",
+  "version": "0.1.0",
   "private": true,
-  "description": "superfluid-streams Frontend",
+  "license": "MIT",
   "author": "Salman Dabbakuti",
-  "keywords": [
-    "react",
-    "antd",
-    "superfluid"
-  ],
-  "main": "src/index.js",
-  "dependencies": {
-    "@ant-design/icons": "4.7.0",
-    "@pushprotocol/restapi": "^0.2.2",
-    "@pushprotocol/socket": "^0.1.0",
-    "@pushprotocol/uiweb": "^0.2.3",
-    "@superfluid-finance/sdk-core": "^0.6.1",
-    "antd": "4.23.2",
-    "buffer": "^6.0.3",
-    "dayjs": "^1.11.7",
-    "ethers": "^5.7.2",
-    "graphql": "^16.6.0",
-    "graphql-request": "^5.1.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-router-dom": "6.4.1",
-    "react-scripts": "5.0.1",
-    "styled-components": "^5.3.6"
-  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "dependencies": {
+    "@ant-design/icons": "5.2.6",
+    "@ethersproject/contracts": "^5.7.0",
+    "@ethersproject/units": "^5.7.0",
+    "@pushprotocol/restapi": "^1.4.45",
+    "@thirdweb-dev/chains": "^0.1.60",
+    "@thirdweb-dev/react": "^4.1.11",
+    "antd": "5.12.1",
+    "dayjs": "^1.11.10",
+    "graphql": "^16.8.1",
+    "graphql-request": "^6.1.0",
+    "next": "^14.0.3",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   },
-  "browserslist": [
-    "chrome >= 67",
-    "edge >= 79",
-    "firefox >= 68",
-    "opera >= 54",
-    "safari >= 14"
-  ]
+  "devDependencies": {
+    "eslint": "8.55.0",
+    "eslint-config-next": "14.0.3"
+  }
 }

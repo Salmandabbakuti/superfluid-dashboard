@@ -1,23 +1,29 @@
+import { BigInt, log } from "@graphprotocol/graph-ts";
 import {
-  BigInt,
-  log
-} from "@graphprotocol/graph-ts";
-import { EpnsNotificationCounter, EpnsPushNotification } from '../generated/schema';
-import { subgraphID } from "./mapping";
+  EpnsNotificationCounter,
+  EpnsPushNotification
+} from "../generated/schema";
 
-export function sendEPNSNotification(recipient: string, notification: string): void {
+const subgraphID = "salmandabbakuti/superfluid-push-mumbai";
+
+export function sendPushNotification(
+  recipient: string,
+  notification: string
+): void {
   let id1 = subgraphID;
-  log.info('New id of EpnsNotificationCounter is: {}', [id1]);
+  log.info("New id of EpnsNotificationCounter is: {}", [id1]);
   let epnsNotificationCounter = EpnsNotificationCounter.load(id1);
   if (epnsNotificationCounter == null) {
     epnsNotificationCounter = new EpnsNotificationCounter(id1);
     epnsNotificationCounter.totalCount = BigInt.fromI32(0);
   }
-  epnsNotificationCounter.totalCount = (epnsNotificationCounter.totalCount).plus(BigInt.fromI32(1));
+  epnsNotificationCounter.totalCount = epnsNotificationCounter.totalCount.plus(
+    BigInt.fromI32(1)
+  );
 
   let count = epnsNotificationCounter.totalCount.toHexString();
   let id2 = `${subgraphID}+${count}`;
-  log.info('New id of EpnsPushNotification is: {}', [id2]);
+  log.info("New id of EpnsPushNotification is: {}", [id2]);
   let epnsPushNotification = EpnsPushNotification.load(id2);
   if (epnsPushNotification == null) {
     epnsPushNotification = new EpnsPushNotification(id2);
