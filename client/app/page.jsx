@@ -38,7 +38,9 @@ dayjs.extend(relativeTime);
 
 export default function Home() {
   const [streams, setStreams] = useState([]);
-  const [streamInput, setStreamInput] = useState({ token: supportedTokens[0].address });
+  const [streamInput, setStreamInput] = useState({
+    token: supportedTokens[0].address
+  });
   const [updatedFlowRate, setUpdatedFlowRate] = useState(null);
   const [loading, setLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
@@ -278,8 +280,8 @@ export default function Home() {
         // calculate flow rate in supportedTokens per month
         const monthlyFlowRate = calculateFlowRateInTokenPerMonth(flowRate);
         const tokenSymbol =
-          supportedTokens.find((oneToken) => oneToken.address === token)?.symbol ||
-          "Unknown";
+          supportedTokens.find((oneToken) => oneToken.address === token)
+            ?.symbol || "Unknown";
         return (
           <span style={{ color: "#1890ff" }}>
             {monthlyFlowRate} {tokenSymbol}/mo
@@ -545,7 +547,8 @@ export default function Home() {
         >
           <h2>Welcome to Superfluid Dashboard</h2>
           <h2>
-            View and manage your Superfluid streams with ease. Including in-house realtime notifications about your streams
+            View and manage your Superfluid streams with ease. Including
+            in-house realtime notifications about your streams
           </h2>
           <h2>Connect your wallet to get started</h2>
         </div>

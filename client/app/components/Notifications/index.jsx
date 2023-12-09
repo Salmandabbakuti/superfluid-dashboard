@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import { superfluidChannelAddress } from "@/utils/constants";
 import NotificationTab from "./NotificationTab";
 
+const isFirstTimeUser = localStorage.getItem("product_tour") === null;
+
 export default function NotificationDrawer() {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
@@ -143,6 +145,17 @@ export default function NotificationDrawer() {
   useEffect(() => {
     if (pushSdk) {
       getNotifications();
+      // if first time user, greet user with and notification and ask to check notifications'
+      if (isFirstTimeUser) {
+        setTimeout(() => {
+          notification.info({
+            message: "Welcome to Superfluid Push Dashboard!",
+            description:
+              "Hey there! Just a friendly reminder to check your notifications in our app. We've got some important updates, messages, and personalized offers waiting for you. Thanks for using our app!"
+          });
+        }, 3000);
+        localStorage.setItem("product_tour", "done");
+      }
     }
   }, [pushSdk, notificationType]);
 
