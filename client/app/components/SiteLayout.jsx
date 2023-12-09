@@ -2,7 +2,7 @@
 import { Divider, Layout } from "antd";
 import { ConnectWallet } from "@thirdweb-dev/react";
 import { fDAIxAddress } from "@/utils/constants";
-import NotificationDrawer from "./NotificationDrawer";
+import NotificationDrawer from "./Notifications";
 import { supportedTokens } from "@/utils";
 import "antd/dist/reset.css";
 
