@@ -6,8 +6,6 @@ import { useState, useEffect } from "react";
 import { superfluidChannelAddress } from "@/utils/constants";
 import NotificationTab from "./NotificationTab";
 
-const isFirstTimeUser = localStorage.getItem("product_tour") === null;
-
 export default function NotificationDrawer() {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
@@ -18,46 +16,6 @@ export default function NotificationDrawer() {
 
   const address = useAddress();
   const signer = useSigner();
-
-  const getNotifications = async () => {
-    pushSdk.notification
-      .list("INBOX", {
-        raw: true,
-        limit: 20,
-        page: 1,
-        ...(notificationType === "superfluid" && {
-          channels: [superfluidChannelAddress]
-        })
-      })
-      .then((res) => {
-        console.log("notifications res->", res);
-        setNotifications(res);
-      })
-      .catch((err) => {
-        console.error("notification err->", err);
-        message.error("Failed to get notifications");
-      });
-  };
-
-  const handleOptInToChannel = async () => {
-    pushSdk.notification
-      .subscribe(`eip155:80001:${superfluidChannelAddress}`, {
-        settings: [
-          {
-            enabled: true,
-            value: "1"
-          }
-        ]
-      })
-      .then((res) => {
-        message.success("Opted-in to channel to receive notifications");
-        console.log("optin res->", res);
-      })
-      .catch((err) => {
-        console.error("optin err->", err);
-        message.error("Failed to opt-in to channel");
-      });
-  };
 
   const initializePushSdk = async (signer, account) => {
     try {
@@ -128,12 +86,58 @@ export default function NotificationDrawer() {
     }
   };
 
+  const removeStreamEvents = (stream) => {
+    stream.off(CONSTANTS.STREAM.CONNECT);
+    stream.off(CONSTANTS.STREAM.DISCONNECT);
+    stream.off(CONSTANTS.STREAM.NOTIF);
+  };
+
   const toggleConnection = () => {
     if (isSocketConnected) {
       stream.disconnect();
     } else {
       stream.connect();
     }
+  };
+
+  const getNotifications = () => {
+    pushSdk.notification
+      .list("INBOX", {
+        raw: true,
+        limit: 20,
+        page: 1,
+        ...(notificationType === "superfluid" && {
+          channels: [superfluidChannelAddress]
+        })
+      })
+      .then((res) => {
+        console.log("notifications res->", res);
+        setNotifications(res);
+      })
+      .catch((err) => {
+        console.error("notification err->", err);
+        message.error("Failed to get notifications");
+      });
+  };
+
+  const handleOptInToChannel = () => {
+    pushSdk.notification
+      .subscribe(`eip155:80001:${superfluidChannelAddress}`, {
+        settings: [
+          {
+            enabled: true,
+            value: "1"
+          }
+        ]
+      })
+      .then((res) => {
+        message.success("Opted-in to channel to receive notifications");
+        console.log("optin res->", res);
+      })
+      .catch((err) => {
+        console.error("optin err->", err);
+        message.error("Failed to opt-in to channel");
+      });
   };
 
   useEffect(() => {
@@ -145,8 +149,9 @@ export default function NotificationDrawer() {
   useEffect(() => {
     if (pushSdk) {
       getNotifications();
+      const productTour = localStorage.getItem("product_tour") === null;
       // if first time user, greet user with and notification and ask to check notifications'
-      if (isFirstTimeUser) {
+      if (productTour) {
         setTimeout(() => {
           notification.info({
             message: "Welcome to Superfluid Push Dashboard!",
@@ -157,6 +162,12 @@ export default function NotificationDrawer() {
         localStorage.setItem("product_tour", "done");
       }
     }
+
+    return () => {
+      if (stream) {
+        removeStreamEvents(stream);
+      }
+    };
   }, [pushSdk, notificationType]);
 
   return (
