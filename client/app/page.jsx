@@ -228,7 +228,7 @@ export default function Home() {
         };
         return (
           <>
-            <Avatar shape="circle" size="large" src={tokenData.icon} />
+            <Avatar shape="circle" size="default" src={tokenData.icon} />
             <a
               href={`${explorerUrl}/token/${token}`}
               target="_blank"

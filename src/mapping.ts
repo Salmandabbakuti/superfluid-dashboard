@@ -127,7 +127,7 @@ export function handleFlowUpdated(event: FlowUpdatedEvent): void {
     message = `Your Superfluid stream with token address ${event.params.token.toHex()} from ${event.params.sender.toHex()} is ${streamStatus.toLowerCase()}`,
     image = "",
     secret = "null",
-    cta = `https://goerli.etherscan.io/tx/${event.transaction.hash.toHex()}`,
+    cta = `https://mumbai.polygonscan.com/tx/${event.transaction.hash.toHex()}`,
     notification = `{\"type\": \"${type}\", \"title\": \"${title}\", \"body\": \"${body}\", \"subject\": \"${subject}\", \"message\": \"${message}\", \"image\": \"${image}\", \"secret\": \"${secret}\", \"cta\": \"${cta}\"}`;
 
   sendPushNotification(recipient, notification);
